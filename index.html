@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0c0b">
+<title>友谊翻车预警 · 你和朋友终将因为什么绝交</title>
+<meta name="description" content="双人配对测试：两个人各答一次，答案拼合后算出你们终将因为什么翻车。">
+<style>:root {
+  --bg: #0f0c0b;
+  --bg2: #171110;
+  --paper: #1d1614;
+  --ink: #f2e7d5;
+  --ink-dim: rgba(242, 231, 213, .58);
+  --ink-faint: rgba(242, 231, 213, .32);
+  --line: rgba(242, 231, 213, .14);
+  --hot: #e6563a;
+  --hot2: #ff8a5c;
+  --serif: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
+  --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
+  opacity: .05; pointer-events: none; z-index: 9999;
+  mix-blend-mode: overlay;
+}
+
+#app { min-height: 100vh; position: relative; z-index: 1; }
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 22px;
+  animation: fadeUp .5s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ================= 通用 ================= */
+.kicker {
+  font-size: 11px; letter-spacing: .28em;
+  color: var(--hot2); text-transform: uppercase;
+  font-weight: 600; margin-bottom: 22px;
+}
+.title {
+  font-family: var(--serif);
+  font-size: clamp(44px, 13vw, 78px);
+  line-height: .98;
+  font-weight: 700;
+  margin: 0 0 24px;
+  letter-spacing: -.01em;
+}
+.title.sm { font-size: clamp(34px, 9.6vw, 52px); }
+.title .accent {
+  color: var(--hot);
+  position: relative;
+  display: inline-block;
+}
+.title .accent::after {
+  content: "";
+  position: absolute; left: -2px; right: -2px; bottom: 4px;
+  height: 3px; background: var(--hot); opacity: .4;
+  transform: skewX(-12deg);
+}
+.sub {
+  font-size: 15px; line-height: 1.85;
+  color: var(--ink-dim);
+  margin: 0 0 34px; max-width: 420px;
+}
+.sub b { color: var(--ink); font-weight: 600; }
+
+.btn {
+  border: none; cursor: pointer;
+  font-family: var(--sans);
+  font-size: 16px; font-weight: 600;
+  padding: 17px 34px;
+  border-radius: 2px;
+  transition: .22s cubic-bezier(.2, .8, .2, 1);
+  letter-spacing: .02em;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+.btn-main {
+  background: var(--hot);
+  color: #fff;
+  box-shadow: 0 8px 28px -8px rgba(230, 86, 58, .6);
+}
+.btn-main:hover { background: #f0614a; transform: translateY(-2px); }
+.btn-main:active { transform: translateY(0); }
+.btn-ghost {
+  background: transparent; color: var(--ink-dim);
+  border: 1px solid var(--line); font-weight: 500;
+}
+.btn-ghost:hover { color: var(--ink); border-color: rgba(242, 231, 213, .34); }
+
+.rules {
+  margin-top: 40px; padding: 20px 22px;
+  border-left: 2px solid rgba(230, 86, 58, .5);
+  background: rgba(230, 86, 58, .045);
+  max-width: 430px; text-align: left;
+}
+.rules.warn { border-left-color: var(--hot); background: rgba(230, 86, 58, .08); }
+.rule-tag {
+  font-size: 11px; letter-spacing: .18em; font-weight: 700;
+  color: var(--hot2); text-transform: uppercase; margin-bottom: 9px;
+}
+.rules p { margin: 0; font-size: 13.5px; line-height: 1.78; color: var(--ink-dim); }
+
+/* ================= 首页 ================= */
+.home { justify-content: center; position: relative; overflow: hidden; }
+.home-glow {
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 640px; height: 640px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 86, 58, .3), transparent 66%);
+  filter: blur(30px); pointer-events: none;
+  animation: breathe 9s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { opacity: .55; transform: translateX(-50%) scale(1); }
+  50% { opacity: .9; transform: translateX(-50%) scale(1.12); }
+}
+.home-inner {
+  position: relative; z-index: 2;
+  max-width: 500px; width: 100%;
+  padding: 72px 0 60px;
+  text-align: left;
+}
+
+.how {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 8px 0 38px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.how-step { flex: 1; padding: 20px 10px 20px 0; }
+.how-arrow {
+  display: flex; align-items: center;
+  color: var(--ink-faint); font-size: 13px; padding: 0 2px;
+}
+.hn {
+  font-family: var(--serif); font-size: 11px;
+  color: var(--hot); letter-spacing: .1em; margin-bottom: 8px;
+}
+.ht { font-size: 13px; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+.hd { font-size: 11.5px; color: var(--ink-faint); line-height: 1.6; }
+
+/* ================= 答题 ================= */
+.quiz { justify-content: flex-start; padding-top: 0; max-width: 560px; margin: 0 auto; width: 100%; }
+.quiz-top {
+  width: 100%; display: flex; justify-content: space-between;
+  align-items: center; padding: 26px 0 14px;
+}
+.quiz-brand { font-size: 12px; font-weight: 600; letter-spacing: .1em; color: var(--ink-dim); }
+.quiz-brand::before {
+  content: ""; display: inline-block; width: 6px; height: 6px;
+  background: var(--hot); border-radius: 50%; margin-right: 8px;
+  vertical-align: middle;
+}
+.quiz-count { font-size: 12px; color: var(--ink-faint); letter-spacing: .1em; }
+.quiz-count span { color: var(--hot); font-weight: 700; font-size: 15px; }
+
+.bar { width: 100%; height: 2px; background: rgba(242, 231, 213, .1); overflow: hidden; }
+.bar i {
+  display: block; height: 100%; background: var(--hot);
+  transition: width .45s cubic-bezier(.2, .8, .2, 1);
+}
+
+.q-body { width: 100%; padding: 46px 0 20px; flex: 1; }
+.q-body.q-self { padding-top: 38px; }
+.q-dim {
+  font-size: 11px; letter-spacing: .14em; color: var(--hot2);
+  font-weight: 600; margin-bottom: 18px;
+}
+.q-text {
+  font-family: var(--serif);
+  font-size: clamp(22px, 5.6vw, 28px);
+  line-height: 1.5; font-weight: 600;
+  margin: 0 0 32px; letter-spacing: -.005em;
+}
+
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 14px;
+  width: 100%; text-align: left;
+  padding: 16px 18px;
+  background: rgba(242, 231, 213, .035);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink-dim);
+  font-family: var(--sans); font-size: 14.5px; line-height: 1.65;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.opt:hover {
+  background: rgba(242, 231, 213, .07);
+  border-color: rgba(242, 231, 213, .3);
+  color: var(--ink);
+  transform: translateX(3px);
+}
+.opt.sel {
+  background: rgba(230, 86, 58, .13);
+  border-color: var(--hot);
+  color: var(--ink);
+}
+.oi {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10.5px; font-weight: 700;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-faint);
+  margin-top: 2px;
+  transition: .18s;
+}
+.opt:hover .oi { border-color: rgba(242, 231, 213, .4); color: var(--ink); }
+.opt.sel .oi { background: var(--hot); border-color: var(--hot); color: #fff; }
+.ot { flex: 1; }
+
+.quiz-foot {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0 34px; border-top: 1px solid var(--line); margin-top: 12px;
+}
+.btn-back {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 13px;
+  color: var(--ink-faint); padding: 8px 0;
+  transition: .2s;
+}
+.btn-back:hover:not(:disabled) { color: var(--ink); }
+.btn-back:disabled { opacity: .28; cursor: default; }
+.hint { font-size: 11px; color: var(--ink-faint); letter-spacing: .04em; }
+
+/* ================= 邀请页 ================= */
+.invite { justify-content: center; }
+.inv-inner { max-width: 470px; width: 100%; padding: 60px 0; }
+.inv-badge {
+  display: inline-block;
+  font-size: 11px; letter-spacing: .12em;
+  padding: 7px 13px; margin-bottom: 26px;
+  border: 1px solid rgba(230, 86, 58, .45);
+  color: var(--hot2); border-radius: 2px;
+}
+
+/* ================= 链接页 ================= */
+.link { justify-content: center; }
+.link-inner { max-width: 470px; width: 100%; padding: 60px 0; }
+
+.linkbox {
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(230, 86, 58, .07), rgba(242, 231, 213, .025));
+  padding: 22px; margin-bottom: 8px;
+}
+.lb-tag {
+  font-size: 10.5px; letter-spacing: .16em; font-weight: 700;
+  color: var(--hot2); text-transform: uppercase; margin-bottom: 14px;
+}
+.lb-url {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px; line-height: 1.7;
+  color: var(--ink);
+  word-break: break-all;
+  background: rgba(0, 0, 0, .35);
+  padding: 14px; border: 1px solid var(--line);
+  margin-bottom: 16px;
+  user-select: all;
+}
+.lb-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.lb-actions .btn { flex: 1; min-width: 140px; padding: 14px 18px; font-size: 14px; }
+.lb-note {
+  margin-top: 12px; font-size: 12px; color: var(--hot2);
+  height: 16px; opacity: 0; transition: .3s;
+}
+.lb-note.ok { opacity: 1; }
+
+/* ================= 失效页 ================= */
+.dead { justify-content: center; text-align: left; }
+.dead-inner { max-width: 440px; padding: 60px 0; }
+.dead-icon { font-size: 46px; margin-bottom: 22px; opacity: .85; }
+
+/* ================= 结果页 ================= */
+.result { padding: 0; align-items: stretch; }
+
+.res-hero {
+  position: relative;
+  padding: 54px 24px 38px;
+  background: linear-gradient(170deg, #241a17 0%, #16100f 78%);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  text-align: center;
+}
+.res-hero::before {
+  content: ""; position: absolute;
+  top: -160px; left: 50%; transform: translateX(-50%);
+  width: 520px; height: 520px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 86, 58, .26), transparent 65%);
+  filter: blur(20px);
+}
+.res-hero.lv5::before { background: radial-gradient(circle, rgba(230, 60, 40, .42), transparent 62%); }
+.res-hero > * { position: relative; z-index: 1; }
+
+.res-kicker {
+  font-size: 10.5px; letter-spacing: .26em; color: var(--ink-faint);
+  text-transform: uppercase; margin-bottom: 24px;
+}
+.res-icon { font-size: 52px; line-height: 1; margin-bottom: 16px; }
+.res-name {
+  font-family: var(--serif);
+  font-size: clamp(34px, 10vw, 46px);
+  font-weight: 700; letter-spacing: -.01em; margin-bottom: 10px;
+}
+.res-tag {
+  font-size: 14px; color: var(--hot2); margin-bottom: 34px;
+  font-weight: 500; letter-spacing: .04em;
+}
+
+.res-index { display: flex; align-items: flex-end; justify-content: center; gap: 16px; }
+.ri-num {
+  font-family: var(--serif);
+  font-size: 76px; font-weight: 700; line-height: .82;
+  color: var(--hot2); letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+.ri-meta { text-align: left; padding-bottom: 6px; }
+.ri-label { font-size: 11px; color: var(--ink-faint); letter-spacing: .12em; margin-bottom: 4px; }
+.ri-lv { font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+
+.ri-bar {
+  max-width: 340px; margin: 22px auto 0; height: 3px;
+  background: rgba(242, 231, 213, .12);
+}
+.ri-bar i {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, #c4452c, #ff8a5c);
+  animation: grow 1.1s cubic-bezier(.2, .8, .2, 1) both .25s;
+  transform-origin: left;
+}
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.res-body {
+  max-width: 560px; width: 100%; margin: 0 auto;
+  padding: 8px 22px 60px;
+}
+
+.card {
+  padding: 30px 0;
+  border-bottom: 1px solid var(--line);
+}
+.card:last-of-type { border-bottom: none; }
+.card-h {
+  font-size: 11px; letter-spacing: .16em; font-weight: 700;
+  color: var(--hot2); text-transform: uppercase;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+}
+.cn {
+  font-family: ui-monospace, monospace; font-size: 10px;
+  color: var(--ink-faint); letter-spacing: .06em;
+}
+.lead {
+  font-size: 15.5px; line-height: 1.9; color: var(--ink); margin: 0 0 14px;
+}
+.lead.sm { font-size: 14px; color: var(--ink-dim); }
+.lead b { color: var(--hot2); }
+.killer {
+  font-family: var(--serif);
+  font-size: 18px; line-height: 1.75;
+  color: var(--hot2); margin: 0;
+  padding-left: 16px; border-left: 2px solid rgba(230, 86, 58, .55);
+}
+.tilt {
+  font-size: 13.5px; color: var(--ink-faint); margin: 16px 0 0;
+  padding-top: 14px; border-top: 1px dashed var(--line);
+}
+
+/* 维度条 */
+.dims { display: flex; flex-direction: column; gap: 14px; }
+.dim-row { display: flex; align-items: center; gap: 12px; }
+.dim-name {
+  flex: 0 0 68px; font-size: 12.5px; color: var(--ink-dim);
+}
+.dim-row.hot .dim-name { color: var(--ink); font-weight: 600; }
+.dim-track { flex: 1; height: 6px; background: rgba(242, 231, 213, .08); }
+.dim-track i {
+  display: block; height: 100%;
+  background: rgba(242, 231, 213, .28);
+  transition: width .8s cubic-bezier(.2, .8, .2, 1);
+}
+.dim-row.hot .dim-track i { background: linear-gradient(90deg, #c4452c, #ff8a5c); }
+.dim-val {
+  flex: 0 0 26px; text-align: right;
+  font-size: 11px; color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.dim-row.hot .dim-val { color: var(--hot2); font-weight: 700; }
+
+/* 体感差异（第三段） */
+.card-sub {
+  font-size: 12.5px; line-height: 1.7;
+  color: var(--ink-faint);
+  margin: -6px 0 22px;
+  padding-left: 2px;
+  font-style: italic;
+}
+
+.gaps { display: flex; flex-direction: column; gap: 22px; }
+
+.gap-item {
+  display: flex; gap: 14px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(242,231,213,.07);
+}
+.gap-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.gap-idx {
+  flex: 0 0 auto;
+  font-family: var(--serif);
+  font-size: 12px;
+  color: var(--hot);
+  letter-spacing: .06em;
+  padding-top: 3px;
+  opacity: .8;
+}
+.gap-body { flex: 1; min-width: 0; }
+
+.gap-scene {
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: .02em;
+  margin-bottom: 9px;
+  line-height: 1.5;
+}
+.gap-scene::before {
+  content: "";
+  display: inline-block;
+  width: 14px; height: 1px;
+  background: rgba(230,86,58,.6);
+  vertical-align: 4px;
+  margin-right: 8px;
+}
+
+.gap-d {
+  font-size: 14.5px;
+  line-height: 1.92;
+  color: var(--ink-dim);
+  letter-spacing: .01em;
+}
+
+.feel-close {
+  margin: 26px 0 0;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--hot2);
+  background: rgba(230, 86, 58, .06);
+  border-left: 2px solid rgba(230, 86, 58, .5);
+}
+
+/* 深卡片 */
+.card.dark {
+  background: rgba(0, 0, 0, .3);
+  padding: 30px 22px; margin: 16px 0;
+  border: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.lines { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.line {
+  font-family: var(--serif);
+  font-size: 15.5px; line-height: 1.7;
+  color: var(--ink-dim);
+  padding: 11px 14px;
+  background: rgba(242, 231, 213, .045);
+  border-left: 2px solid rgba(230, 86, 58, .45);
+}
+.prophecy {
+  font-size: 13px; line-height: 1.8;
+  color: var(--hot2); padding-top: 18px;
+  border-top: 1px dashed var(--line);
+}
+.prophecy::before { content: "▸ "; }
+
+.card.ghost { opacity: .82; }
+
+.final-note {
+  font-size: 12.5px; line-height: 1.95;
+  color: var(--ink-faint);
+  padding: 26px 0 30px;
+  text-align: center;
+  font-style: italic;
+}
+
+.res-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  padding-bottom: 16px;
+}
+.res-actions .btn { flex: 1; min-width: 150px; font-size: 14.5px; padding: 15px 20px; }
+.dead-note {
+  text-align: center; font-size: 11px;
+  color: var(--ink-faint); letter-spacing: .06em;
+  padding-bottom: 30px;
+}
+
+/* ================= 海报 ================= */
+.poster-layer {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(8, 6, 5, .93);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; overflow-y: auto;
+  animation: fadeUp .3s both;
+}
+.poster-inner {
+  max-width: 420px; width: 100%;
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 10px 0;
+}
+.poster-tip {
+  font-size: 12px; color: var(--ink-dim); text-align: center;
+  letter-spacing: .04em;
+}
+.poster-inner img {
+  width: 100%; display: block;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .9);
+}
+.poster-btns { display: flex; gap: 10px; }
+.poster-btns .btn { flex: 1; font-size: 14px; padding: 14px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 40px;
+  transform: translate(-50%, 20px);
+  background: rgba(242, 231, 213, .96);
+  color: #1a1210;
+  font-size: 13px; font-weight: 600;
+  padding: 12px 22px; border-radius: 2px;
+  opacity: 0; transition: .3s; z-index: 1200;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.in { opacity: 1; transform: translate(-50%, 0); }
+
+/* ================= 响应式 / 桌面 ================= */
+@media (min-width: 720px) {
+  .screen { padding: 0 32px; }
+  .res-body { padding-top: 14px; }
+  .card { padding: 36px 0; }
+  .home-inner { padding: 90px 0 80px; }
+  .poster-layer { padding: 40px; }
+}
+@media (max-width: 360px) {
+  .how { flex-direction: column; }
+  .how-arrow { transform: rotate(90deg); justify-content: center; padding: 2px 0; }
+  .how-step { padding: 12px 0; }
+}
+
+/* 维度条短评 */
+.dim-note {
+  font-size: 11.5px; line-height: 1.5;
+  color: var(--ink-faint);
+  padding: 0 0 2px 80px;
+  margin-top: -6px;
+}
+.dim-note.on { color: var(--ink-dim); }
+.dn-lv {
+  display: inline-block;
+  font-size: 9.5px; letter-spacing: .08em;
+  padding: 1px 6px; margin-right: 8px;
+  border: 1px solid var(--line);
+  color: var(--ink-faint);
+  vertical-align: 1px;
+}
+.dim-note.on .dn-lv {
+  border-color: rgba(230, 86, 58, .55);
+  color: var(--hot2);
+}
+
+/* ================= 首页底部入口 ================= */
+.home-foot {
+  display: flex; align-items: center; gap: 10px;
+  padding: 22px 0 4px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.foot-link {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+  color: var(--ink-dim); padding: 0;
+  display: inline-flex; align-items: center; gap: 5px;
+  border-bottom: 1px solid rgba(242,231,213,.25);
+  padding-bottom: 2px;
+  transition: .2s;
+}
+.foot-link:hover { color: var(--hot2); border-color: var(--hot); }
+.foot-badge {
+  display: none;
+  min-width: 16px; height: 16px; line-height: 16px;
+  padding: 0 5px;
+  background: var(--hot); color: #fff;
+  font-size: 10px; font-weight: 700;
+  border-radius: 8px; text-align: center;
+}
+.foot-sep { color: var(--ink-faint); }
+.foot-note { color: var(--ink-faint); }
+
+.other-link {
+  margin-top: 26px;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 13px;
+  color: var(--ink-faint); padding: 0;
+  transition: .2s;
+}
+.other-link:hover { color: var(--hot2); }
+
+/* ================= 我的链接 ================= */
+.manage { justify-content: flex-start; }
+.mg-inner { max-width: 500px; width: 100%; padding: 34px 0 60px; }
+
+.mg-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 22px;
+}
+.mg-title {
+  font-family: var(--serif); font-size: 17px; font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.mg-stats {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+.mgs {
+  flex: 1; padding: 20px 0; text-align: center;
+  border-right: 1px solid var(--line);
+}
+.mgs:last-child { border-right: none; }
+.mgs-n {
+  display: block;
+  font-family: var(--serif); font-size: 26px; font-weight: 700;
+  line-height: 1; margin-bottom: 7px;
+}
+.mgs-n.hot { color: var(--hot2); }
+.mgs-l { font-size: 11px; color: var(--ink-faint); letter-spacing: .06em; }
+
+.mg-list { margin-top: 8px; }
+.mg-empty {
+  text-align: center; padding: 56px 0;
+  font-size: 13px; line-height: 1.9; color: var(--ink-faint);
+}
+.mg-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(242,231,213,.07);
+  gap: 12px;
+}
+.mg-main { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.mg-idx {
+  font-family: ui-monospace, monospace;
+  font-size: 11px; color: var(--ink-faint);
+  flex: 0 0 auto;
+}
+.mg-time { font-size: 13px; color: var(--ink); margin-bottom: 4px; }
+.mg-status {
+  font-size: 11px; color: var(--ink-faint);
+  display: flex; align-items: center; gap: 5px;
+}
+.mg-row.open .mg-status { color: var(--hot2); }
+.dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--hot); display: inline-block;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.mg-row.used { opacity: .55; }
+.mg-btn {
+  background: transparent; cursor: pointer;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  font-family: var(--sans); font-size: 11.5px;
+  padding: 7px 13px; border-radius: 2px;
+  white-space: nowrap;
+  transition: .2s;
+}
+.mg-btn:hover { color: var(--ink); border-color: rgba(242,231,213,.35); }
+.mg-btn.copy:hover { color: var(--hot2); border-color: var(--hot); }
+
+.mg-hint {
+  font-size: 11.5px; line-height: 1.9;
+  color: var(--ink-faint);
+  padding: 26px 0 30px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>/* ============================================================
+   友谊翻车预警 —— 题库与配对数据层
+   全部题面、选项、文案为原创设计，未参考任何现有问卷
+   五个裂缝维度：
+     T 时间温差   —— 一段时间不见，谁先觉得"我们淡了"
+     M 边界态度   —— 你的东西、你的时间、你的隐私被越过时
+     C 冲突姿态   —— 意见真正对撞的那一刻
+     R 回应力     —— 对方需要你 / 你需要对方时的接球质量
+     V 价值尺度   —— 借钱、站队、点评彼此人生的时刻
+   ============================================================ */
+
+const DIM_KEYS = ['T', 'M', 'C', 'R', 'V'];
+
+const DIMS = {
+  T: { name: '时间温差', short: '温差', desc: '多久不联系你会觉得不对劲' },
+  M: { name: '边界态度', short: '边界', desc: '亲密到什么程度算越界' },
+  C: { name: '冲突姿态', short: '冲突', desc: '吵起来的时候你怎么处理' },
+  R: { name: '回应力', short: '回应', desc: '对方抛球过来你接不接得住' },
+  V: { name: '价值尺度', short: '尺度', desc: '钱、面子、人生选择上的立场' }
+};
+
+/* 每题 4 选项，w = 该选项的在意程度（0-100），越高越在意
+   选项顺序随机打乱，不按权重高低排列 */
+const QUESTIONS = [
+  /* ---- T 时间温差 ---- */
+  {
+    id: 'q1',
+    scene: '关于"多久没联系才算还好"', dim: 'T',
+    q: '你们上一次真正聊天（不是点赞）隔了两周。你打开对话框，第一反应是——',
+    opts: [
+      { t: '心里冒出"是不是我哪里得罪他了"，先发个"在吗"试探', w: 90 },
+      { t: '直接甩过去三条语音，把这两周攒的全倒出来', w: 74 },
+      { t: '看看他有没有新动态，有再决定要不要开口', w: 48 },
+      { t: '挺好的，各自忙，有事自然会找', w: 22 }
+    ]
+  },
+  {
+    id: 'q2',
+    scene: '关于"被推掉的约该怎么读"', dim: 'T',
+    q: '对方连续三次推掉你的约，理由都很正当。第四次你——',
+    opts: [
+      { t: '不再主动约了，但心里已经开始记账', w: 88 },
+      { t: '第四次照约，顺便问一句"你最近是不是不太顺"', w: 62 },
+      { t: '直接说：你这样我要怀疑我们是不是朋友了', w: 80 },
+      { t: '哦，那就等他哪天想起来再说', w: 22 }
+    ]
+  },
+  /* ---- M 边界态度 ---- */
+  {
+    id: 'q3',
+    scene: '关于"我们的场合能不能有别人"', dim: 'M',
+    q: '你没提前招呼，就带了另一个朋友来参加你们俩的饭局。你觉得——',
+    opts: [
+      { t: '完全没问题，我朋友就是他朋友', w: 26 },
+      { t: '应该先说一声，但说了他一定会同意', w: 55 },
+      { t: '得先问，这是基本礼貌', w: 84 },
+      { t: '我绝不会这么做，二人局就二人局', w: 95 }
+    ]
+  },
+  {
+    id: 'q4',
+    scene: '关于"手机能不能自己拿"', dim: 'M',
+    q: '对方拿起你手机翻相册，说要找你们以前的合照。',
+    opts: [
+      { t: '随便翻，我俩之间没这个界限', w: 20 },
+      { t: '行吧，但我眼睛会盯着', w: 52 },
+      { t: '我会说：我给你找，你别自己滑', w: 82 },
+      { t: '不行。这不是关系亲不亲的问题', w: 96 }
+    ]
+  },
+  {
+    id: 'q5',
+    scene: '关于"被当笑话讲的那一刻"', dim: 'M',
+    q: '对方在别人面前讲你的糗事，全场都在笑，他也笑得很开心。',
+    opts: [
+      { t: '无所谓，能被当笑话讲说明关系够铁', w: 18 },
+      { t: '我也跟着笑，回去再私下说', w: 52 },
+      { t: '笑不出来，但忍着，回去会冷他几天', w: 86 },
+      { t: '当场就笑着怼回去，让他也下一层台', w: 96 }
+    ]
+  },
+  /* ---- C 冲突姿态 ---- */
+  {
+    id: 'q6',
+    scene: '关于"话说到哪一步该停"', dim: 'C',
+    q: '你们吵起来了，对方说了一句明显过线的话。你——',
+    opts: [
+      { t: '当场把话顶回去，说清楚他的问题在哪', w: 94 },
+      { t: '不吵了，冷处理，让他自己想', w: 16 },
+      { t: '先忍着，事后发很长一段文字全部讲清楚', w: 72 },
+      { t: '算了，翻篇，下次不提', w: 34 }
+    ]
+  },
+  {
+    id: 'q7',
+    scene: '关于"冷战里谁先开口"', dim: 'C',
+    q: '吵架之后，谁是先开口的那个？',
+    opts: [
+      { t: '必须是他先说，我说了就等于我错了', w: 96 },
+      { t: '谁错谁先，这很公平', w: 62 },
+      { t: '我一般会先发个无关的东西试探', w: 76 },
+      { t: '我扛不住冷战，通常我先', w: 20 }
+    ]
+  },
+  /* ---- R 回应力 ---- */
+  {
+    id: 'q8',
+    scene: '关于"凌晨那条消息该多快被接住"', dim: 'R',
+    q: '凌晨两点，你情绪很糟，发了一条很长的消息给他。',
+    opts: [
+      { t: '希望他立刻回，哪怕只回一句"我在"', w: 95 },
+      { t: '希望他回，但不回我也不会记恨', w: 55 },
+      { t: '其实只是想说，第二天看到也行', w: 42 },
+      { t: '我不太会这样发消息，我会自己扛过去', w: 25 }
+    ]
+  },
+  {
+    id: 'q9',
+    scene: '关于"十分钟的絮叨值不值得听完"', dim: 'R',
+    q: '他兴冲冲跟你讲一件你完全不感兴趣的事，讲了十分钟。',
+    opts: [
+      { t: '我会跟着问，让他讲完，他开心我也开心', w: 82 },
+      { t: '我会听，但会找机会岔开话题', w: 50 },
+      { t: '我会直接说：这我真不懂，换个话题', w: 32 },
+      { t: '我会假装在看手机，让他自己讲完', w: 18 }
+    ]
+  },
+  {
+    id: 'q10',
+    scene: '关于"好意该不该拦一下"', dim: 'R',
+    q: '他做了个明显不靠谱的决定，正在兴头上。你会——',
+    opts: [
+      { t: '泼冷水，现在不说以后更麻烦', w: 86 },
+      { t: '先支持，等他冷静了再提一句', w: 60 },
+      { t: '问他要不要听听我的看法，然后照着说', w: 72 },
+      { t: '不说，他自己的路，撞了才知道', w: 24 }
+    ]
+  },
+  /* ---- V 价值尺度 ---- */
+  {
+    id: 'q11',
+    scene: '关于"朋友之间的钱怎么说清"', dim: 'V',
+    q: '他开口借一笔对你来说不小的钱，用途说得含糊。',
+    opts: [
+      { t: '直接借，朋友之间问那么多干嘛', w: 30 },
+      { t: '借，但会问清楚用途和还款时间', w: 68 },
+      { t: '会借一部分，剩下的说清楚我的难处', w: 74 },
+      { t: '不借。钱一旦进来，关系就变味了', w: 92 }
+    ]
+  },
+  {
+    id: 'q12',
+    scene: '关于"闹翻了该站哪一边"', dim: 'V',
+    q: '他跟另一个人闹翻了，来跟你吐槽，而那个人跟你也还行。',
+    opts: [
+      { t: '无条件站他，他对我来说更重要', w: 93 },
+      { t: '听他说，但我不会跟着一起骂', w: 58 },
+      { t: '会替那个人解释两句，讲我看到的一面', w: 72 },
+      { t: '我不想被卷进去，尽量不表态', w: 22 }
+    ]
+  },
+  {
+    id: 'q13',
+    scene: '关于"朋友能不能点评你的人生"', dim: 'V',
+    q: '他对你的人生选择（工作、对象、要不要生）说了一句很直的评语。',
+    opts: [
+      { t: '我听得进去，说得对我就改', w: 28 },
+      { t: '我不爱听，但他有这个资格说', w: 50 },
+      { t: '会当场不舒服，但不会发作', w: 74 },
+      { t: '这越过界了，我的人生不接受点评', w: 96 }
+    ]
+  }
+];
+
+/* 自评题：不参与维度，但修正"翻车力度"（自我中心的坦诚度） */
+const SELF_Q = {
+  id: 'self',
+  q: '最后一句实话：这段关系里，谁更容易先觉得"被辜负"？',
+  opts: [
+    { t: '我。我常常觉得自己付出得更多', v: 3 },
+    { t: '五五开，看事情', v: 2 },
+    { t: '他。他更敏感一点', v: 1 },
+    { t: '说不清，我们俩都挺拧的', v: 2 }
+  ]
+};
+
+/* ============================================================
+   翻车类型库
+   每种：触发条件（维度向量特征）+ 文案
+   vec 表示该类型对应的"裂缝形状"：哪个维度最痛
+   ============================================================ */
+
+const CRASH_TYPES = [
+  {
+    id: 'silence',
+    focus: 'T', sub: 'C',
+    name: '无声退场型',
+    tag: '不吵架，也不联系了',
+    icon: '🌫',
+    lead: '你们之间不会有任何一场爆发。只是某天你翻聊天记录，发现上一句还是三个月前的"哈哈哈"。',
+    killer: '你们俩都在等对方先开口，然后一起等成了陌生人。',
+    lines: ['"最近忙吗？"（其实已经想了三天）', '"改天约"（双方都知道这个改天不会来）', '"他应该也挺忙的吧"'],
+    rescue: '定一个不需要理由的联系节奏——比如每月一次固定通话，内容不重要，存在本身是重点。你们的问题不是没感情，是没人愿意当那个"看起来更在意的人"。',
+    vec: { T: 1.0, M: 0.1, C: 0.5, R: 0.15, V: 0.1 }
+  },
+  {
+    id: 'score',
+    focus: 'C', sub: 'M',
+    name: '记账清算型',
+    tag: '每一笔都记着，只是没结账',
+    icon: '🧾',
+    lead: '你记得他三次推掉你的约，也记得那次他一句话就让你在饭桌上僵住。这些事你没提，但你一件都没忘。',
+    killer: '终结点往往不是大事，而是一件很小的、完全不成比例的事，你把三年的账一次性倒出来。',
+    lines: ['"我早就想说了。"', '"上次你不也是这样？"', '"行，那我把话讲清楚。"'],
+    rescue: '把"记账"改成"当日结"。小事当天说一句"刚才那句我有点不舒服"，比憋三年后清算省太多。你们不是没有话说，是把话都存成了弹药。',
+    vec: { T: 0.55, M: 0.7, C: 0.85, R: 0.4, V: 0.5 }
+  },
+  {
+    id: 'boundary',
+    focus: 'M', sub: 'V',
+    name: '越界窒息型',
+    tag: '太熟了，熟到没有门',
+    icon: '🚪',
+    lead: '你们的关系没有门。他推门就进，你也一样。一开始这叫亲密，后来这叫没有退路。',
+    killer: '你终于说了句"你能不能别这样"，他愣住："我们之间还要这样？"——那一秒，关系就变了。',
+    lines: ['"我们之间还分这么清？"', '"你变了。"', '"我不就是随便看看。"'],
+    rescue: '明确说出你的边界，并且承担"被说变了"的代价。真正的朋友会调整，只想占便宜的人会生气。分辨这两者，比维持关系更重要。',
+    vec: { T: 0.2, M: 5.0, C: 0.4, R: 0.2, V: 0.35 }
+  },
+  {
+    id: 'coldwar',
+    focus: 'C', sub: 'T',
+    name: '冷战内耗型',
+    tag: '谁先开口，谁就输了',
+    icon: '🧊',
+    lead: '你们的争吵从来不会结束，只会暂停。暂停期间双方都在等，等一句其实谁都可以先说的话。',
+    killer: '冷战的长度最终超过了感情的耐力。等到有人愿意开口，发现已经没什么可说的了。',
+    lines: ['（已读不回，第 11 天）', '"没事。"', '"我没什么好说的。"'],
+    rescue: '把"先开口"从输赢里拿出来。你们可以吵，但约定一条：不超过 48 小时不联系。冷战不是解决问题的方式，它只是把问题冻起来，冻久了会裂。',
+    vec: { T: 0.6, M: 0.25, C: 5.0, R: 0.35, V: 0.2 }
+  },
+  {
+    id: 'onesided',
+    focus: 'R', sub: 'T',
+    name: '单向耗竭型',
+    tag: '一个人一直在接球',
+    icon: '🏸',
+    lead: '有一个人永远在听、在回、在体谅、在替对方找理由。另一个人觉得这一切理所当然。',
+    killer: '付出的一方不是被某件事击垮的，是被"又一次"击垮的。某天他只是不想回了，然后就再也没回。',
+    lines: ['"我最近是真的忙。"', '"你怎么突然这样？"', '（对方甚至不知道发生过什么）'],
+    rescue: '失衡的关系不会自己回正。要么明确要求对方承担一半，要么接受这段关系只能这么深。最糟的是继续假装平衡，一边付出一边积怨。',
+    vec: { T: 0.45, M: 0.3, C: 0.5, R: 5.0, V: 0.3 }
+  },
+  {
+    id: 'valueclash',
+    focus: 'V', sub: 'C',
+    name: '三观断裂型',
+    tag: '某天发现，你们不是一路人',
+    icon: '⚡',
+    lead: '你们的默契曾经很好，好到掩盖了一个事实：在真正重要的事情上，你们从来没认真对过答案。',
+    killer: '一次借钱、一次站队、一次对彼此人生的点评，把"我们很像"这句话直接拆了。',
+    lines: ['"你居然是这么想的？"', '"我没想到你是这种人。"', '"算了，不说这个了。"（然后真的不说了）'],
+    rescue: '三观不必完全一致，但必须知道彼此的分歧在哪，并且约定哪些话题不动。真正杀死关系的不是分歧，是发现分歧后那种"原来我一直在跟一个陌生人吃饭"的失重感。',
+    vec: { T: 0.2, M: 0.4, C: 0.5, R: 0.3, V: 5.0 }
+  },
+  {
+    id: 'lag',
+    focus: 'T', sub: 'R',
+    name: '时差错频型',
+    tag: '一个还在原地，一个已经走远',
+    icon: '⏳',
+    lead: '你们的交情建立在某个具体的人生段落里——同宿舍、同公司、同一座城。那个段落结束了，连接就开始松动。',
+    killer: '不是谁变了。是你们的"共同语言"变少的速度，超过了感情消耗的速度。',
+    lines: ['"你那边怎么样？" "还行。"', '（开始回忆往事，因为当下没得聊）', '"有空来玩啊"（谁都知不会来）'],
+    rescue: '给关系换一个载体。靠回忆维持的友谊会逐年稀薄，要找到新的共同事——一起做点什么，而不是一起回忆什么。',
+    vec: { T: 5.0, M: 0.2, C: 0.3, R: 0.4, V: 0.3 }
+  },
+  {
+    id: 'slowburn',
+    focus: 'T', sub: 'M',
+    name: '慢性消磨型',
+    tag: '没有凶手，只有时间',
+    icon: '🕯',
+    lead: '你们之间没有任何一个能拿出来说的问题。每次见面都挺好，就是见面越来越少，间隔越来越长。',
+    killer: '没有一场事故。只是各自的生活把人拉走，而你们都没觉得需要往回拉一把。',
+    lines: ['"感觉我们好久没见了。"', '"下次一定。"', '"他应该过得挺好的吧。"'],
+    rescue: '这种关系不是坏了，是没人管了。要么主动给它一点维护成本，要么坦然接受它会变成"曾经很好的朋友"。两种都不算失败，怕的是一边怀念一边不动。',
+    vec: { T: 0.85, M: 0.6, C: 0.6, R: 0.7, V: 0.6 }
+  },
+  {
+    id: 'jealous',
+    focus: 'V', sub: 'R',
+    name: '隐秘比较型',
+    tag: '我为你高兴，但只有一点点',
+    icon: '🪞',
+    lead: '你们关系很好，好到能说真话。但每次一方往上走，另一方的"真话"里就多了一点别的味道。',
+    killer: '不是嫉妒本身，是嫉妒被说出来、又被听出来的那一刻。你们都没法假装没听出来。',
+    lines: ['"挺好的，适合你。"（停顿有点长）', '"你现在不一样了。"', '"没有没有，我是真心为你高兴。"'],
+    rescue: '承认比较心存在，并且把它和"我希望你好"分开。能同时装下这两件事的友谊才是真的。如果说不出口，就别用"为你好"包装，那比沉默伤人。',
+    vec: { T: 0.3, M: 0.5, C: 0.6, R: 0.55, V: 1.9 }
+  },
+  {
+    id: 'disposable',
+    focus: 'R', sub: 'V',
+    name: '工具化警觉型',
+    tag: '需要你的时候，你很清楚',
+    icon: '🔧',
+    lead: '他对你不是不好。只是他找你的时候，通常都带着一件具体的事。你也一样，只是你不愿意承认。',
+    killer: '某次你真的需要他，他没空。你突然想通：哦，原来这个通道是单向的。',
+    lines: ['"在吗？帮个忙。"', '"这次真的只有你能帮我。"', '"改天请你吃饭。"（从未发生）'],
+    rescue: '不必撕破脸，但需要重新标定这段关系的性质。它可能是"资源互换"而非"朋友"，这没有错，错的是你一直按朋友的标准去期待。降低预期，比提高要求更省力。',
+    vec: { T: 0.4, M: 0.6, C: 0.3, R: 1.7, V: 1.6 }
+  }
+];
+
+/* ============================================================
+   分歧点文案：每维度按"谁更在意"分两侧
+   a  = A 明显更在意；b = B 明显更在意；near = 差不多
+   ============================================================ */
+const GAPTEXT = {
+  T: {
+    a: '你更在意联系频率。他不回你，你会开始算时间；他则觉得不联系不等于不在乎。',
+    b: '他更在意联系频率。你隔很久才出现，他不会说，但会记着。',
+    near: '你们对"多久该联系一次"的预期差不多，这一条基本不咬人。'
+  },
+  M: {
+    a: '你更在意分寸。他眼里的"咱俩还分这个"，在你看来是需要先问一声的越界。',
+    b: '他更在意分寸。你眼里的"随便拿、替你决定"，在他看来是越界。',
+    near: '你们对边界的松紧度接近，不太会因为"你太过了"吵起来。'
+  },
+  C: {
+    a: '你更倾向当场讲清，他更倾向冷处理。你越追，他越退，这个循环最容易失控。',
+    b: '他更倾向当场讲清，你更倾向先冷下来。他容易把你的沉默读成不在乎。',
+    near: '你们吵架的方式接近，冲突未必伤人，但也可能一起把事情糊过去。'
+  },
+  R: {
+    a: '你需要更多回应。他不接球你会失落，而他觉得自己只是没空。',
+    b: '他需要更多回应。你觉得自己已经尽力了，他觉得还不够。',
+    near: '你们对"被回应"的需求接近，供需大致平衡。'
+  },
+  V: {
+    a: '你在钱、立场、人生选择上的尺度更硬。他可能觉得你太较真。',
+    b: '他在钱、立场、人生选择上的尺度更硬。你可能觉得他不近人情。',
+    near: '你们的价值底线比较接近，这一项能兜住不少事。'
+  }
+};
+
+/* ============================================================
+   体感差异文案（第三段用）
+   原则：不交代谁选了什么、不比较谁对谁错。
+   只写"同一件事，两个人感受到的重量不一样"。
+   每道题一组，每条都刻意留白，不指认任何一方。
+   ============================================================ */
+const FEEL = {
+  q1: {
+    hi: '同样是两周没说话，在一个人心里是"我们是不是出事了"，在另一个人心里只是"这两周有点忙"。两种都不是错，只是重量不同。',
+    mid: '沉默这件事，你们大概都有自己的解释。怕的是两个人都觉得对方应该先懂。',
+    lo: '这一项上你们的刻度接近，安静不太会成为问题。'
+  },
+  q2: {
+    hi: '被推掉的那几次，有人会当成"他有事"，有人会悄悄记成"我好像没那么重要"。这两种记账方式，很难对得上账。',
+    mid: '取消约定这件事，一个想的是行程，一个想的是态度。错位往往就发生在这一层。',
+    lo: '这一项上你们读得很近，被推掉也不太会往心里去。'
+  },
+  q3: {
+    hi: '多带一个人来，有人觉得是热闹，有人觉得是被占了位子。谁都没说出口，但那一刻的气氛，两个人体感并不一样。',
+    mid: '你们的场合边界没有完全对齐，但还不至于难堪。',
+    lo: '这一项上你们的默契不错，不太会为"谁该在场"别扭。'
+  },
+  q4: {
+    hi: '手机这个动作，一个人做的时候觉得是"我们之间还分这个"，另一个人被翻的时候，心里会有一瞬间的紧绷。那一下很短，但确实存在。',
+    mid: '亲密到什么程度算刚好，你们心里各有一把尺，只是刻度略有差别。',
+    lo: '这一项上你们对"哪儿不该伸手"的看法接近。'
+  },
+  q5: {
+    hi: '同一句玩笑，一个人在笑，一个人在等它过去。都不是小气，是那个瞬间被放的位置不一样。',
+    mid: '被当作笑料的时候，你们的承受阈值不太一样。多数时候能过去，偶尔会留下一点什么。',
+    lo: '这一项上你们的分寸感挨得很近，不太会在这里失手。'
+  },
+  q6: {
+    hi: '话顶到那一步，有人要当场把它说清，有人需要先离开那个房间。两种都是自我保护的姿势，只是方向相反。',
+    mid: '起冲突的时候，你们的节奏不太同步。一个还在原地，另一个已经不打算继续了。',
+    lo: '这一项上你们吵起来的姿势相似，不太会互相误读。'
+  },
+  q7: {
+    hi: '冷战里最难的不是生气，是等。有人能一直等下去，有人在等的过程中，会一点点确认"原来可以没有我"。',
+    mid: '和好这件事，你们谁先迈那一步，好像一直没有明确过。',
+    lo: '这一项上你们对沉默的耐性接近，不容易拖成僵局。'
+  },
+  q8: {
+    hi: '凌晨那条很长的消息，发的人是在求救，收到的人可能第二天才看见。这中间没有谁不够好，只是时区不一样。',
+    mid: '被回应这件事，你们需要的量不太一样。多数时候能补上，少数时候会空着。',
+    lo: '这一项上你们对回应的期待差不多，落空的机会不多。'
+  },
+  q9: {
+    hi: '同一段十分钟的讲述，讲的人在靠近，听的人可能已经在心里走神。这种温差很隐蔽，但会累积。',
+    mid: '耐心这件事，你们给得出，只是不一定给在同一个时候。',
+    lo: '这一项上你们的耐心水平接近，不太会为这个失衡。'
+  },
+  q10: {
+    hi: '一个想伸手拦一下，一个只想被祝福。出发点是关心，落点却是"你凭什么管我"。',
+    mid: '好意和边界，在你们之间偶尔会撞一下，但还不是硬伤。',
+    lo: '这一项上你们的分寸感很接近，好意在你们之间不太会变形。'
+  },
+  q11: {
+    hi: '关于钱的那句话最难说。一个人觉得"问清楚才叫尊重"，另一个人听到的是"你不信我"。两句话之间没有翻译。',
+    mid: '钱和交情在你们之间还没有真正搅在一起过，但已经能看出一点倾向。',
+    lo: '这一项上你们对钱的边界感接近，不太会在这里翻船。'
+  },
+  q12: {
+    hi: '站队这件事，有人觉得义气就是无条件，有人觉得不表态才是对所有人都公平。两种都叫讲道理，只是讲的不是同一套道理。',
+    mid: '遇到"你帮谁"的时刻，你们可能会各自沉默一会儿。',
+    lo: '这一项上你们的站队逻辑接近，不太会为选边为难。'
+  },
+  q13: {
+    hi: '一句直话，说的人觉得是掏心，听的人可能觉得是被点评了人生。这两个动作长得很像，感受完全不同。',
+    mid: '关于"我们能管对方到哪一步"，你们心里各有答案。',
+    lo: '这一项上你们对"能管到哪"的分寸接近。'
+  }
+};
+
+/* 维度级补充：当三处都落在同一维度时，用这句收 */
+const FEEL_DIM_CLOSE = {
+  T: '说到底，你们的裂缝不是感情淡了，是"多久没联系才算淡"这个刻度不一样。',
+  M: '说到底，你们的裂缝不是不亲，是"多亲才算亲"的门槛不一样。',
+  C: '说到底，你们的裂缝不是有仇，是"这件事该不该说出口"的时机不一样。',
+  R: '说到底，你们的裂缝不是不关心，是"关心该怎么送到"的方式不一样。',
+  V: '说到底，你们的裂缝不是谁错了，是"什么才叫对"的答案不一样。'
+};
+
+const BASELINE_TEXT = {
+  T: '你们都会主动，也都容得下安静，这一块不是雷区。',
+  M: '你们彼此留门，知道哪里不该伸手。',
+  C: '你们不太会正面撞上，冲突成本低。',
+  R: '你们对"要回多快"都没有执念，少了这一层拉扯。',
+  V: '你们在钱和立场上各自有分寸，还没到需要摊牌的时候。'
+};
+
+/* 高危台词：按维度挑一句 */
+const PROPHECY = {
+  T: {
+    hi: '你们会在"好久没聊了"这句话里卡住好几次',
+    mid: '你们的联系会慢慢变成只在生日和过年出现',
+    lo: '你们本来就习惯各过各的，这一点反而不是问题'
+  },
+  M: {
+    hi: '你们会为"这点事也要计较？"这句话翻脸一次以上',
+    mid: '你们会在某次越界后，各自沉默地重新画一条线',
+    lo: '你们彼此留门，这大概是最不容易出事的地方'
+  },
+  C: {
+    hi: '你们的争吵会以"谁先说话"收场，而不是谁对',
+    mid: '你们吵得起来也停得下来，只是每次都会留一点疙瘩',
+    lo: '你们不太吵，但也不太把话说透'
+  },
+  R: {
+    hi: '有一方会先停止回应，然后另一方会记很久',
+    mid: '你们的接球水平不太对等，但还在可修复的范围',
+    lo: '你们都不太期待对方接住自己，这既是自由也是距离'
+  },
+  V: {
+    hi: '真正让你们翻的，会是某次立场表态，而不是感情本身',
+    mid: '你们在某些事上其实不是一路人，只是还没碰上',
+    lo: '你们的价值底线比较接近，这能兜住很多事'
+  }
+};
+</script>
+<script>/* ============================================================
+   配对算法 v4
+   ------------------------------------------------------------
+   裂缝是"两个人的差异形状"，所以要判断的不是"你们有多糟"，
+   而是"你们的糟，是哪种形状"。
+
+   1) 单题疼痛： ache = 分歧 × (0.15 + 0.85 × 双方在意下限)
+   2) 维度裂缝：该维度题目疼痛均值
+   3) 主导裂缝：占比最高的维度 → 决定"主战场"
+      次主导裂缝：第二高维度 → 决定"次战场"
+   4) 类型匹配（打分制）：
+      主战场命中该类型 focus  +100
+      次战场命中该类型 sub    +40
+      主战场命中该类型 sub    +25
+      形状余弦相似度          +0~30
+      主导度不足（过于平均）时所有类型向"慢性消磨"收敛
+   ============================================================ */
+
+function scoreAnswers(ans) {
+  const perQ = {};
+  const dimSums = { T: 0, M: 0, C: 0, R: 0, V: 0 };
+  const dimCount = { T: 0, M: 0, C: 0, R: 0, V: 0 };
+  QUESTIONS.forEach(q => {
+    const idx = ans[q.id] | 0;
+    const o = q.opts[idx] || q.opts[0];
+    perQ[q.id] = o.w;
+    dimSums[q.dim] += o.w;
+    dimCount[q.dim]++;
+  });
+  const dimScore = {};
+  DIM_KEYS.forEach(k => dimScore[k] = dimSums[k] / dimCount[k]);
+  return { perQ, dimScore, self: ans.self != null ? ans.self : 1 };
+}
+
+function pairAnalyze(ansA, ansB) {
+  const A = scoreAnswers(ansA);
+  const B = scoreAnswers(ansB);
+
+  const qGap = {};
+  const dimAche = { T: [], M: [], C: [], R: [], V: [] };
+  QUESTIONS.forEach(q => {
+    const wa = A.perQ[q.id], wb = B.perQ[q.id];
+    const diff = Math.abs(wa - wb);
+    const minW = Math.min(wa, wb);
+    // 疼痛 = 分歧为主项（平方放大中等分歧）× 在意度修正
+    const emph = 0.42 + 0.58 * (minW / 100);
+    const ache = (diff / 100) ** 1.35 * emph;
+    qGap[q.id] = { diff, minW, ache, wa, wb };
+    dimAche[q.dim].push(ache);
+  });
+
+  const vec = {};
+  DIM_KEYS.forEach(k => {
+    const arr = dimAche[k];
+    vec[k] = arr.reduce((s, x) => s + x, 0) / arr.length;
+  });
+  const total = DIM_KEYS.reduce((s, k) => s + vec[k], 0);
+  const T_SAFE = total > 1e-6 ? total : 1e-6;
+  const share = {};
+  DIM_KEYS.forEach(k => share[k] = vec[k] / T_SAFE);
+
+  const order = [...DIM_KEYS].sort((a, b) => share[b] - share[a]);
+  const domK = order[0], subK = order[1];
+  const domShare = share[domK];
+  // 主导度：0（完全平均）~ 1（极端集中）
+  const domLift = Math.max(0, Math.min(1, (domShare - 0.20) / 0.30));
+
+  // 形状相似度 → 0~30
+  const shapeScore = {};
+  CRASH_TYPES.forEach(t => {
+    const tm = Math.sqrt(DIM_KEYS.reduce((s, k) => s + (t.vec[k] || 0) ** 2, 0)) || 1;
+    const vm2 = Math.sqrt(DIM_KEYS.reduce((s, k) => s + vec[k] ** 2, 0)) || 1;
+    let dot = 0;
+    DIM_KEYS.forEach(k => dot += (vec[k] / vm2) * ((t.vec[k] || 0) / tm));
+    shapeScore[t.id] = Math.max(0, dot) * 30;
+  });
+
+  const scored = CRASH_TYPES.map(t => {
+    let sc = shapeScore[t.id];
+    if (t.focus === domK) sc += 100;
+    if (t.focus === subK) sc += 30;
+    if (t.sub === domK) sc += 25;
+    if (t.sub === subK) sc += 40;
+    // 主导度低时，把分往"慢性消磨"（无明确主战场）拉
+    if (domLift < 0.42) {
+      const pull = (0.42 - domLift) / 0.42;      // 0~1
+      if (t.id === 'slowburn') sc += 46 * pull;
+      else sc -= 14 * pull;
+    }
+    return { type: t, score: sc, focus: t.focus, focusMatch: t.focus === domK };
+  }).sort((a, b) => b.score - a.score);
+
+  const primary = scored[0];
+  const secondary = scored[1];
+
+  const topQ = Object.entries(qGap)
+    .map(([id, g]) => ({ id, ...g, q: QUESTIONS.find(x => x.id === id) }))
+    .sort((a, b) => b.ache - a.ache)
+    .slice(0, 3);
+
+  const avgAche = Object.values(qGap).reduce((s, g) => s + g.ache, 0) / Object.keys(qGap).length;
+  const topAche = topQ.reduce((s, x) => s + x.ache, 0) / topQ.length;
+  const selfBonus = (A.self + B.self - 2) * 2.6;
+  // 以"最痛三题"为主导，用整体均值做微调；再乘一个 S 型曲线拉开两端
+  let raw = 12 + topAche * 118 + avgAche * 46 + selfBonus;
+  raw = Math.max(0, Math.min(100, raw));
+  // 拉幅：把 30-80 段拉伸到 18-94
+  const stretch = v => {
+    const x = Math.max(0, Math.min(1, (v - 24) / 52));   // 24→0, 76→1
+    const s = 1 / (1 + Math.exp(-(x - 0.5) * 6.2));       // sigmoid
+    return Math.round(14 + s * 82);
+  };
+  let index = stretch(raw);
+  index = Math.max(12, Math.min(99, index));
+
+  const tilt = A.self - B.self;
+
+  return {
+    A, B, vec, share, domK, subK, domLift, qGap, topQ,
+    primary, secondary, avgAche, index, tilt, ranked: scored
+  };
+}
+
+function levelOf(index) {
+  if (index >= 85) return { txt: '高危 · 只差一根火柴', cls: 'lv5' };
+  if (index >= 72) return { txt: '偏高 · 裂缝已成形', cls: 'lv4' };
+  if (index >= 58) return { txt: '中等 · 有隐患但可控', cls: 'lv3' };
+  if (index >= 45) return { txt: '偏低 · 有点小疙瘩', cls: 'lv2' };
+  return { txt: '稳定 · 你们挺耐的', cls: 'lv1' };
+}
+</script>
+<script>/* ============================================================
+   backend.js —— 可选的后端对接层
+   ------------------------------------------------------------
+   不配 API_BASE 时：纯前端模式（默认），链接一次性靠"链接状态位"，
+                    跨设备能识别已作废，但清缓存仍可绕过。
+   配了 API_BASE 后：服务端权威判定，真正不可绕过，且支持付费配额。
+   ------------------------------------------------------------
+   切换方法：把下面 API_BASE 改成你的服务地址即可，例如
+     const API_BASE = 'https://your-domain.com';
+   ============================================================ */
+
+const API_BASE = '';                    // 留空 = 纯前端模式（默认）
+
+const Backend = {
+  enabled: () => !!API_BASE,
+
+  async _fetch(path, opts = {}) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const r = await fetch(API_BASE + path, {
+        ...opts,
+        signal: ctl.signal,
+        headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }
+      });
+      const data = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, data };
+    } catch (e) {
+      return { ok: false, status: 0, data: { error: 'network' }, offline: true };
+    } finally {
+      clearTimeout(timer);
+    }
+  },
+
+  /* 生成链接 */
+  async createLink(code, ownerKey, orderId) {
+    return this._fetch('/api/link', {
+      method: 'POST',
+      body: JSON.stringify({ code, ownerKey, orderId })
+    });
+  },
+
+  /* 查状态：pending / locked / spent / revoked */
+  async getState(id) {
+    return this._fetch('/api/link/' + encodeURIComponent(id));
+  },
+
+  /* 抢锁：开始作答 */
+  async lock(id) {
+    return this._fetch('/api/link/' + encodeURIComponent(id) + '/lock', { method: 'POST' });
+  },
+
+  /* 交卷 */
+  async submit(id, payload) {
+    return this._fetch('/api/link/' + encodeURIComponent(id) + '/submit', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  /* 我的链接 */
+  async mine(ownerKey) {
+    return this._fetch('/api/mine?owner=' + encodeURIComponent(ownerKey));
+  }
+};
+
+/* 把后端错误码翻译成人话 */
+const BACKEND_MSG = {
+  not_found: '这条链接不存在，可能是复制时少了字符。',
+  already_locked: '这条链接正在被作答，请稍后再试。',
+  already_spent: '这条链接已经出过结果了，不能重复使用。',
+  already_revoked: '这条链接已被停用。',
+  quota_exhausted: '这个订单的链接额度已用完，需要再购买。',
+  order_not_found: '订单不存在或未支付成功。',
+  too_many: '操作太频繁，请等一分钟再试。',
+  network: '网络不太顺，请检查连接后重试。',
+  bad_code: '答案数据格式不对。',
+  unavailable: '这条链接当前不可用。'
+};
+function backendMsg(code) {
+  return BACKEND_MSG[code] || '出了点问题，请稍后重试。';
+}
+</script>
+<script>/* ============================================================
+   app.js —— 友谊翻车预警 主逻辑
+   一次性链接机制：
+     链接里带 A 的答案哈希片段；B 打开后，答案只在内存中参与计算，
+     结果生成后写入 localStorage 的「已消耗」名单，同一链接再次打开
+     会看到"该链接已失效"页。分享出去的二次链接不带任何原始答案。
+   ============================================================ */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ---------- 编解码 v2：位级打包，尽量短的链接 ----------
+   14 题 × 2bit + 自评题 2bit = 30bit
+   用 base64url（64 字符）承载：6 字符 = 36bit，足够 30bit
+   再加 1 位版本号 → 仍只占 6 字符
+   签名单字符：63 进制校验位，把"随手改一位"挡住 98% 以上
+   ---------------------------------------------------------- */
+const B64U = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+
+function packAns(ans) {
+  let v = 0;
+  QUESTIONS.forEach(q => { v = (v << 2) | ((ans[q.id] ?? 0) & 3); });
+  v = (v << 2) | ((ans.self ?? 0) & 3);
+  return v;                         // 30 bit
+}
+function unpackAns(v) {
+  const ans = {};
+  let x = v;
+  ans.self = x & 3; x >>= 2;
+  for (let i = QUESTIONS.length - 1; i >= 0; i--) {
+    ans[QUESTIONS[i].id] = x & 3;
+    x >>= 2;
+  }
+  return ans;
+}
+function toB64(v, len) {
+  let s = '';
+  for (let i = 0; i < len; i++) {
+    s = B64U[v & 63] + s;
+    v = Math.floor(v / 64);
+  }
+  return s;
+}
+function fromB64(s) {
+  let v = 0;
+  for (const c of s) v = v * 64 + B64U.indexOf(c);
+  return v;
+}
+/* 6 位编码：最高位塞版本号（当前 =1），其余 30bit 是答案 */
+function encodeAns(ans) {
+  const body = packAns(ans);            // 30bit
+  const withVer = body + 1 * Math.pow(2, 30);  // 31bit，版本 1
+  return toB64(withVer, 6);
+}
+function decodeAns(code) {
+  if (typeof code !== 'string' || code.length !== 6) return null;
+  for (const c of code) if (B64U.indexOf(c) < 0) return null;
+  const v = fromB64(code);
+  const ver = Math.floor(v / Math.pow(2, 30));
+  if (ver !== 1) return null;
+  return unpackAns(v % Math.pow(2, 30));
+}
+
+/* 双字符校验位：CRC 风格加权 + 位置扰动
+   两位 = 62×62 种，单字符篡改拦截率 ~99.9%
+   ------------------------------------------------------------
+   关键设计：链接自带"生命周期状态"
+     A 态（原始）   —— 等待对方作答
+     B 态（进行中） —— 对方已开始作答（占用锁）
+     C 态（已用）   —— 已出结果，链接作废
+   三种状态用不同的 salting 生成签名，因此：
+     · 任何设备拿到 C 态链接，都能立刻判断"这条已经用过了"
+     · 不依赖对方设备的 localStorage —— 解决了跨设备失效问题
+   ------------------------------------------------------------ */
+const SALT_PENDING = 'p';
+const SALT_LOCKED = 'k';
+const SALT_SPENT = 's';
+
+function sigWith(code, salt) {
+  let h1 = 0x1505, h2 = 0x1b3d;
+  const full = salt + code;
+  for (let i = 0; i < full.length; i++) {
+    const c = full.charCodeAt(i);
+    h1 = (h1 * 33 + c) % 999983;
+    h2 = (h2 * 37 + c * (i + 11)) % 999979;
+  }
+  return B64U[h1 % 62] + B64U[(h1 * 31 + h2) % 62];
+}
+function sig(code) { return sigWith(code, SALT_PENDING); }
+
+/* 反解状态：给一段 code + 两位签名，判断它属于哪个阶段 */
+function detectState(code, s) {
+  if (s === sigWith(code, SALT_PENDING)) return 'pending';
+  if (s === sigWith(code, SALT_LOCKED)) return 'locked';
+  if (s === sigWith(code, SALT_SPENT)) return 'spent';
+  return null;                 // 校验不通过
+}
+
+/* ---------- 本地存储 ----------
+   三张表：
+   used   —— 已消耗的链接（一次性机制）
+   lock   —— 正在作答中的占用（并发保护）
+   links  —— 我生成过的链接（管理面板）
+   -------------------------------------------------- */
+const LSK = 'friendship_crash_used_v2';
+const LK_LOCK = 'friendship_crash_lock_v2';
+const LK_LINKS = 'friendship_crash_links_v2';
+
+function readJSON(key, def) {
+  try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return v == null ? def : v; }
+  catch (e) { return def; }
+}
+function writeJSON(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { }
+}
+
+function usedList() { return readJSON(LSK, []); }
+function isUsed(key) { return usedList().indexOf(key) >= 0; }
+function markUsed(key) {
+  const l = usedList();
+  if (l.indexOf(key) < 0) {
+    l.push(key);
+    writeJSON(LSK, l.slice(-400));      // 大量链接也不撑爆存储
+  }
+  // 同时把管理面板里对应的那一条标成已用
+  const links = myLinks();
+  const t = links.find(x => x.key === key);
+  if (t) { t.used = Date.now(); writeJSON(LK_LINKS, links); }
+}
+
+/* 我生成的链接清单 */
+const ME_KEY = 'friendship_crash_me_v2';
+function myId() {
+  let id = localStorage.getItem(ME_KEY);
+  if (!id) { id = Math.random().toString(36).slice(2, 8); localStorage.setItem(ME_KEY, id); }
+  return id;
+}
+function myLinks() { return readJSON(LK_LINKS, []); }
+function addLink(rec) {
+  const l = myLinks();
+  l.unshift(rec);
+  writeJSON(LK_LINKS, l.slice(0, 300));
+}
+
+/* ---------- 链接解析 ----------
+   新格式：#<6位答案码><2位状态签名>
+   签名同时编码"阶段"，所以任何设备都能识别已作废的链接
+   兼容旧格式：#d=<code>&s=<sig>
+   -------------------------------------------------- */
+function parseHash() {
+  const h = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if (!h) return null;
+
+  // 旧格式兼容
+  if (h.indexOf('d=') === 0 || h.indexOf('?') === 0) {
+    const p = new URLSearchParams(h.replace(/^\?/, ''));
+    const code = (p.get('d') || p.get('c') || '').trim();
+    if (!code) return null;
+    return { mode: 'join', code, state: 'pending', valid: true, key: code };
+  }
+
+  const compact = h.replace(/[^0-9a-zA-Z\-_=]/g, '');
+
+  // 后端模式：#t=<id>
+  if (compact.indexOf('t=') === 0) {
+    const id = compact.slice(2);
+    if (!/^[0-9a-zA-Z]{8,32}$/.test(id)) return { mode: 'bad', reason: 'len' };
+    return { mode: 'join', serverId: id, code: null, state: 'unknown', valid: true, key: id };
+  }
+
+  if (compact.length === 8) {
+    const code = compact.slice(0, 6), s = compact.slice(6);
+    const ans = decodeAns(code);
+    if (ans == null) return { mode: 'bad', reason: 'code' };
+    const st = detectState(code, s);
+    if (!st) return { mode: 'bad', reason: 'sig' };
+    return { mode: 'join', code, state: st, valid: true, key: code };
+  }
+  // 容错：只给了 6 位答案码（没带状态位），视为待作答
+  if (compact.length === 6 && decodeAns(compact) != null) {
+    return { mode: 'join', code: compact, state: 'pending', valid: true, key: compact };
+  }
+  return { mode: 'bad', reason: 'len' };
+}
+
+/* 生成一条链接（指定阶段）
+   · 纯前端模式：#<6位答案码><2位状态签名>
+   · 后端模式：  #t=<链接ID>   （状态由服务端权威保存） */
+function buildLink(code, stage, serverId) {
+  const base = `${location.origin}${location.pathname}${location.search}`;
+  if (serverId) {
+    return `${base}#t=${serverId}`;
+  }
+  const salt = stage === 'spent' ? SALT_SPENT
+    : stage === 'locked' ? SALT_LOCKED : SALT_PENDING;
+  const full = code + sigWith(code, salt);
+  return `${base}#${full}`;
+}
+
+/* ============================================================
+   状态机
+   ============================================================ */
+const state = {
+  role: null,          // 'A' | 'B'
+  cur: 0,
+  ans: {},
+  joinCode: null,      // 纯前端模式：A 的答案码
+  serverId: null,      // 后端模式：服务端链接 ID
+  result: null,
+  lockHeld: false,     // 是否持有该链接的作答锁
+  lastLink: null       // 刚生成的链接
+};
+
+function el(tag, cls, html) {
+  const d = document.createElement(tag);
+  if (cls) d.className = cls;
+  if (html != null) d.innerHTML = html;
+  return d;
+}
+
+/* ---------- 首页 ---------- */
+function renderHome() {
+  const app = $('#app');
+  app.innerHTML = '';
+  const wrap = el('div', 'screen home');
+
+  wrap.innerHTML = `
+    <div class="home-glow"></div>
+    <div class="home-inner">
+      <div class="kicker">FRIENDSHIP CRASH TEST · 双人版</div>
+      <h1 class="title">友谊<br><span class="accent">翻车预警</span></h1>
+      <p class="sub">你和这个朋友，终将因为什么绝交？<br>不是算命。是把你们俩的答案拼在一起，看裂缝长在哪。</p>
+
+      <div class="how">
+        <div class="how-step">
+          <div class="hn">01</div>
+          <div class="ht">你先答 14 题</div>
+          <div class="hd">按你自己的真实反应选，别替对方想。</div>
+        </div>
+        <div class="how-arrow">→</div>
+        <div class="how-step">
+          <div class="hn">02</div>
+          <div class="ht">生成专属链接</div>
+          <div class="hd">把链接发给那个朋友，不是发给别人。</div>
+        </div>
+        <div class="how-arrow">→</div>
+        <div class="how-step">
+          <div class="hn">03</div>
+          <div class="ht">他答完，结果自动拼合</div>
+          <div class="hd">两人都看不到对方原始答案，只看得到结论。</div>
+        </div>
+      </div>
+
+      <button class="btn btn-main" id="start">开始测试</button>
+
+      <div class="home-foot">
+        <button class="foot-link" id="manage">
+          我的链接<span class="foot-badge" id="openCount"></span>
+        </button>
+        <span class="foot-sep">·</span>
+        <span class="foot-note">每条链接独立，可同时发给很多人</span>
+      </div>
+
+      <div class="rules">
+        <div class="rule-tag">一次性机制</div>
+        <p>每个链接只能拼一次。生成结果后链接立即失效，不能反复换人测、也不能重答刷结果。这是它还算准的原因。</p>
+      </div>
+    </div>
+  `;
+  app.appendChild(wrap);
+  $('#start').onclick = () => startA();
+  $('#manage').onclick = () => renderManage();
+
+  const openN = myLinks().filter(x => !x.used).length;
+  if (openN > 0) {
+    $('#openCount').textContent = openN;
+    $('#openCount').style.display = 'inline-block';
+  }
+}
+
+/* ---------- 答题 ---------- */
+function startA() {
+  state.role = 'A';
+  state.cur = 0;
+  state.ans = {};
+  renderQuiz();
+}
+function startB(code, serverId) {
+  state.role = 'B';
+  state.cur = 0;
+  state.ans = {};
+  state.joinCode = code;
+  state.serverId = serverId || null;
+  renderQuiz();
+}
+
+function allQuestions() {
+  return [...QUESTIONS, SELF_Q];
+}
+
+function renderQuiz() {
+  const app = $('#app');
+  const list = allQuestions();
+  const q = list[state.cur];
+  const total = list.length;
+  const isSelf = q.id === 'self';
+
+  app.innerHTML = '';
+  const wrap = el('div', 'screen quiz');
+
+  const progress = Math.round((state.cur / total) * 100);
+
+  wrap.innerHTML = `
+    <div class="quiz-top">
+      <div class="quiz-brand">友谊翻车预警</div>
+      <div class="quiz-count"><span>${String(state.cur + 1).padStart(2, '0')}</span> / ${total}</div>
+    </div>
+    <div class="bar"><i style="width:${progress}%"></i></div>
+    <div class="q-body ${isSelf ? 'q-self' : ''}">
+      <div class="q-dim">${isSelf ? '最后一题 · 关于你自己' : DIMS[q.dim].name + ' · ' + DIMS[q.dim].desc}</div>
+      <h2 class="q-text">${q.q}</h2>
+      <div class="opts" id="opts"></div>
+    </div>
+    <div class="quiz-foot">
+      <button class="btn-back" id="back">← ${state.cur === 0 ? (state._preview ? '退出预览' : '回首页') : '上一题'}</button>
+      <div class="hint">${state._preview ? '这是朋友会看到的界面' : (state.role === 'A' ? '答完后生成专属链接' : '答完立即出结果，链接随即失效')}</div>
+    </div>
+  `;
+  app.appendChild(wrap);
+
+  const optsBox = $('#opts');
+  q.opts.forEach((o, i) => {
+    const b = el('button', 'opt');
+    b.innerHTML = `<span class="oi">${'ABCD'[i]}</span><span class="ot">${o.t}</span>`;
+    if (state.ans[q.id] === i) b.classList.add('sel');
+    b.onclick = () => {
+      state.ans[q.id] = i;
+      $$('.opt').forEach(x => x.classList.remove('sel'));
+      b.classList.add('sel');
+      setTimeout(next, 180);
+    };
+    optsBox.appendChild(b);
+  });
+
+  $('#back').onclick = () => {
+    if (state._preview) {        // 预览模式：随时退出，不消耗任何东西
+      state._preview = false;
+      state.role = null;
+      renderHome();
+      return;
+    }
+    if (state.cur > 0) { state.cur--; renderQuiz(); }
+    else if (state.role === 'B') { boot(); }
+    else { renderHome(); }
+  };
+
+  function next() {
+    if (state.cur < total - 1) {
+      state.cur++;
+      renderQuiz();
+    } else {
+      finish();
+    }
+  }
+}
+
+/* ---------- 完成 ---------- */
+function finish() {
+  if (state._preview) {              // 预览不计入，直接给出合成示例
+    state._preview = false;
+    state.role = null;
+    renderLinkPage();
+    toast('预览结束 · 你的链接没有被消耗');
+    return;
+  }
+  if (state.role === 'A') {
+    renderLinkPage();
+    return;
+  }
+
+  // ---------- B 交卷 ----------
+  if (state.serverId) { return finishServer(); }
+
+  const usedKey = state.joinCode;
+  if (!usedKey) { renderHome(); return; }
+  const ansA = decodeAns(usedKey);
+  if (!ansA) { renderBad('链接里的答案对不上，可能在转发时被截断了。'); return; }
+  // 无论结果如何，先把链接钉死成"已作废"，防止二次使用
+  try { history.replaceState(null, '', buildLink(usedKey, 'spent')); } catch (e) { }
+  markUsed(usedKey);
+  try {
+    state.result = pairAnalyze(ansA, state.ans);
+    renderResult(state.result, 'B');
+  } catch (e) {
+    console.error(e);
+    renderBad('结果计算出了点问题，请让朋友重新发一条链接。');
+  }
+}
+
+/* 后端模式交卷：结果由服务端定夺，抢不到就是抢不到 */
+async function finishServer() {
+  const app = $('#app');
+  app.innerHTML = `<div class="screen dead"><div class="dead-inner">
+      <div class="dead-icon">🧮</div>
+      <div class="sub" style="text-align:center">正在拼合你们的答案…</div>
+    </div></div>`;
+
+  if (!state._ansA) {
+    return renderBad('没有拿到对方的答案，请让朋友重新发一条链接。');
+  }
+
+  // 本地先算出结果，交给服务端存档
+  let local = null;
+  try {
+    local = pairAnalyze(state._ansA, state.ans);
+  } catch (e) {
+    console.error(e);
+    return renderBad('结果计算出了点问题，请让朋友重新发一条链接。');
+  }
+
+  const bCode = encodeAns(state.ans);
+  const r = await Backend.submit(state.serverId, {
+    bCode,
+    resultType: local.primary.type.id,
+    resultIdx: local.index
+  });
+
+  if (!r.ok) {
+    if (r.data.error === 'already_spent') return renderDead();
+    if (r.offline) {
+      // 断网：仍给用户看结果，但提示未成功登记
+      state.result = local;
+      renderResult(local, 'B');
+      toast('网络不稳，结果已生成但可能未登记');
+      return;
+    }
+    return renderBad(backendMsg(r.data.error));
+  }
+
+  try { history.replaceState(null, '', buildLink(null, 'spent', state.serverId)); } catch (e) { }
+  state.result = local;
+  renderResult(local, 'B');
+}
+
+/* 通用错误页：任何解码/计算异常都落到这里，绝不留白屏 */
+function renderBad(msg) {
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="screen dead"><div class="dead-inner">
+      <div class="dead-icon">✂</div>
+      <h1 class="title sm">这条链接<br><span class="accent">打不开了</span></h1>
+      <p class="sub">${msg || '链接可能在转发过程中被截断或改动了。'}<br>让朋友重新复制一条完整的给你就好。</p>
+      <div class="rules">
+        <div class="rule-tag">提示</div>
+        <p>请用"复制链接"按钮直接复制，不要手动抄写或从截图里识别——链接里每一个字符都很重要。</p>
+      </div>
+      <button class="btn btn-main" id="again">回到首页</button>
+    </div></div>
+  `;
+  $('#again').onclick = () => { location.hash = ''; renderHome(); };
+}
+
+/* ---------- A 生成链接 ---------- */
+async function renderLinkPage() {
+  const app = $('#app');
+  const code = encodeAns(state.ans);
+
+  // 后端模式：先向服务端登记，拿到链接 ID
+  let serverId = null;
+  if (Backend.enabled()) {
+    app.innerHTML = `<div class="screen link"><div class="link-inner">
+        <div class="kicker">STEP 2 / 3</div>
+        <div class="sub" style="text-align:center;padding:40px 0">正在封存你的答案…</div>
+      </div></div>`;
+    const r = await Backend.createLink(code, myId(), localStorage.getItem('crash_order') || '');
+    if (!r.ok) {
+      renderBad(backendMsg(r.data.error));
+      return;
+    }
+    serverId = r.data.id;
+  }
+
+  app.innerHTML = '';
+  const link = serverId ? buildLink(null, 'pending', serverId) : buildLink(code, 'pending');
+  const shown = shortenLink(link);
+
+  // 记录到"我的链接"
+  addLink({
+    key: serverId || code,
+    code: code + sigWith(code, SALT_PENDING),
+    url: link, at: Date.now(), used: null
+  });
+  state.lastLink = link;
+
+  const wrap = el('div', 'screen link');
+  wrap.innerHTML = `
+    <div class="link-inner">
+      <div class="kicker">STEP 2 / 3</div>
+      <h1 class="title sm">你的部分<br><span class="accent">已经封存</span></h1>
+      <p class="sub">下面这条链接里装着你的答案，但看不到内容。<br>把它发给那个朋友——只能发给他。他答完，我们才拼。</p>
+
+      <div class="linkbox">
+        <div class="lb-tag">专属配对链接 · 仅可使用一次</div>
+        <div class="lb-url" id="url">${shown}</div>
+        <div class="lb-actions">
+          <button class="btn btn-main" id="copy">复制链接</button>
+          <button class="btn btn-ghost" id="preview">先看看他会看到什么</button>
+        </div>
+        <div class="lb-note" id="copied"></div>
+      </div>
+
+      <div class="rules">
+        <div class="rule-tag">为什么是一次性</div>
+        <p>链接一旦被用来出结果，就会作废。这样你没法拿同一次作答去测好几个朋友、也没法反复重答挑一个好看的结论——结论才有意义。</p>
+      </div>
+
+      <button class="other-link" id="more">我要测别的朋友 →</button>
+    </div>
+  `;
+  app.appendChild(wrap);
+
+  $('#copy').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch (e) {
+      const r = document.createRange();
+      r.selectNodeContents($('#url'));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      document.execCommand('copy'); s.removeAllRanges();
+    }
+    $('#copied').textContent = '✓ 已复制，去发给他吧';
+    $('#copied').classList.add('ok');
+  };
+
+  $('#preview').onclick = () => {
+    state.role = 'B'; state.cur = 0; state.ans = {}; state.joinCode = code;
+    state._preview = true;
+    renderQuiz();
+  };
+
+  $('#more').onclick = () => {
+    state._preview = false;
+    state.role = null;
+    renderHome();
+    toast('重新答一遍，会生成一条新的链接');
+  };
+}
+
+/* 展示用的短链：去掉 file:// 之类的冗长前缀，只留关键部分 */
+function shortenLink(full) {
+  try {
+    const u = new URL(full);
+    if (u.protocol === 'file:') {
+      // 本地打开时没有域名可省，展示完整路径更有用
+      return full;
+    }
+    const host = u.host;
+    const hash = u.hash;
+    const pathPart = u.pathname.replace(/\/index\.html?$/, '/').replace(/\/$/, '');
+    return host + pathPart + u.search + hash;
+  } catch (e) {
+    return full;
+  }
+}
+
+/* ---------- 我的链接（管理面板） ---------- */
+function renderManage() {
+  const app = $('#app');
+  const links = myLinks();
+  const usedN = links.filter(x => x.used).length;
+  const openN = links.length - usedN;
+
+  const rows = links.length ? links.map((x, i) => {
+    const d = new Date(x.at);
+    const time = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const isOpen = !x.used;
+    return `
+      <div class="mg-row ${isOpen ? 'open' : 'used'}">
+        <div class="mg-main">
+          <div class="mg-idx">#${String(links.length - i).padStart(2, '0')}</div>
+          <div class="mg-info">
+            <div class="mg-time">${time}</div>
+            <div class="mg-status">${isOpen ? '<span class="dot"></span>等待对方作答' : '已完成 · 已作废'}</div>
+          </div>
+        </div>
+        <div class="mg-actions">
+          ${isOpen
+        ? `<button class="mg-btn copy" data-url="${x.url.replace(/"/g, '&quot;')}">复制</button>`
+        : `<button class="mg-btn copy" data-url="${x.url.replace(/"/g, '&quot;')}">查看链接</button>`}
+        </div>
+      </div>`;
+  }).join('') : `<div class="mg-empty">还没有生成过链接。<br>回到首页答一遍，就会有一条。</div>`;
+
+  app.innerHTML = `
+    <div class="screen manage">
+      <div class="mg-inner">
+        <div class="mg-top">
+          <button class="btn-back" id="back">← 返回</button>
+          <div class="mg-title">我的链接</div>
+          <button class="btn-back" id="clear">清空</button>
+        </div>
+
+        <div class="mg-stats">
+          <div class="mgs"><span class="mgs-n">${links.length}</span><span class="mgs-l">生成过</span></div>
+          <div class="mgs"><span class="mgs-n hot">${openN}</span><span class="mgs-l">待作答</span></div>
+          <div class="mgs"><span class="mgs-n">${usedN}</span><span class="mgs-l">已完成</span></div>
+        </div>
+
+        <div class="mg-list">${rows}</div>
+
+        <div class="mg-hint">
+          每条链接都是独立的一对一配对，互不影响。<br>
+          你可以同时发给很多朋友，谁先答完谁先出结果。
+        </div>
+
+        <button class="btn btn-main" id="newone" style="width:100%;margin-top:8px">我再生成一条</button>
+      </div>
+    </div>
+  `;
+  $('#back').onclick = () => { location.hash = ''; renderHome(); };
+  $('#newone').onclick = () => { location.hash = ''; startA(); };
+  $('#clear').onclick = () => {
+    if (confirm('清空后，这些链接的记录会消失（但对方手里的链接仍然有效）。确定吗？')) {
+      writeJSON(LK_LINKS, []);
+      renderManage();
+    }
+  };
+  $$('.mg-btn.copy').forEach(b => {
+    b.onclick = async () => {
+      const u = b.dataset.url;
+      try { await navigator.clipboard.writeText(u); } catch (e) { }
+      toast('链接已复制');
+    };
+  });
+}
+
+/* ---------- 失效页 ---------- */
+function renderDead() {
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="screen dead">
+      <div class="dead-inner">
+        <div class="dead-icon">🔒</div>
+        <h1 class="title sm">这条链接<br><span class="accent">已经用过了</span></h1>
+        <p class="sub">每个配对链接只能拼一次结果。<br>它要么已经出过结论，要么被打开过又关掉了。</p>
+        <div class="rules">
+          <div class="rule-tag">想再测一次？</div>
+          <p>回到首页重新开始，生成一条新的链接。换一个人测、或者和朋友重新各答一遍，都可以——但那会是一份新的答案。</p>
+        </div>
+        <button class="btn btn-main" id="again">重新开始</button>
+      </div>
+    </div>
+  `;
+  $('#again').onclick = () => { location.hash = ''; renderHome(); };
+}
+
+/* ---------- 结果页 ---------- */
+function renderResult(R, who) {
+  const app = $('#app');
+  const lv = levelOf(R.index);
+  const t = R.primary.type;
+  const t2 = R.secondary.type;
+
+  /* 维度条（按占比，最高的那条是主战场） */
+  const shareMax = Math.max(...DIM_KEYS.map(k => R.share[k]));
+  const dimRows = DIM_KEYS
+    .map(k => ({ k, v: R.share[k] }))
+    .sort((a, b) => b.v - a.v)
+    .map(({ k, v }, i) => {
+      const pct = Math.round((v / shareMax) * 100);
+      const hot = i === 0;
+      const sharePct = Math.round(v * 100);
+      return `
+        <div class="dim-row ${hot ? 'hot' : ''}">
+          <div class="dim-name">${DIMS[k].name}</div>
+          <div class="dim-track"><i style="width:${Math.max(5, pct)}%"></i></div>
+          <div class="dim-val">${sharePct}%</div>
+        </div>
+        <div class="dim-note ${hot ? 'on' : ''}">${dimNote(k, hot, R)}</div>`;
+    }).join('');
+
+  /* 每个维度的短评 */
+function dimNote(k, isTop, R) {
+  const s = R.share[k];
+  const lvl = isTop ? '主战场' : s > 0.22 ? '次战场' : s > 0.16 ? '偶尔咬人' : '基本安全';
+  const detail = {
+    T: ['联系频率上你们没对齐', '联系节奏基本合得上'],
+    M: ['亲密的尺度你们理解不同', '边界感比较一致'],
+    C: ['处理冲突的方式是反的', '冲突成本不高'],
+    R: ['接球的质量不对等', '供需大致平衡'],
+    V: ['某些立场上你们不是一路人', '价值底线比较接近']
+  }[k][isTop || s > 0.22 ? 0 : 1];
+  return `<span class="dn-lv">${lvl}</span>${detail}`;
+}
+
+/* 预言对白 */
+  const hotDim = { k: R.domK, v: R.domLift };
+  const prophecy = PROPHECY[hotDim.k][hotDim.v > 0.62 ? 'hi' : hotDim.v > 0.3 ? 'mid' : 'lo'];
+
+  const tiltTxt = R.tilt > 0
+    ? '你更容易先觉得"被辜负"。'
+    : R.tilt < 0
+      ? '他更容易先觉得"被辜负"。'
+      : '你们在这件事上出奇地对等，谁也不欠谁。';
+
+  app.innerHTML = '';
+  const wrap = el('div', 'screen result');
+
+  wrap.innerHTML = `
+    <div class="res-hero ${lv.cls}">
+      <div class="res-kicker">配对结论 · 一次性结果</div>
+      <div class="res-icon">${t.icon}</div>
+      <div class="res-name">${t.name}</div>
+      <div class="res-tag">${t.tag}</div>
+      <div class="res-index">
+        <div class="ri-num">${R.index}</div>
+        <div class="ri-meta">
+          <div class="ri-label">翻车指数</div>
+          <div class="ri-lv">${lv.txt}</div>
+        </div>
+      </div>
+      <div class="ri-bar"><i style="width:${R.index}%"></i></div>
+    </div>
+
+    <div class="res-body">
+      <section class="card">
+        <div class="card-h"><span class="cn">01</span>结局预告</div>
+        <p class="lead">${t.lead}</p>
+        <p class="killer">${t.killer}</p>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">02</span>裂缝分布</div>
+        <div class="dims">${dimRows}</div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">03</span>体感不太一样的三处</div>
+        <p class="card-sub">这里不谈谁对谁错。同一件事，你们感受到的重量本来就可能不同。</p>
+        <div class="gaps" id="gaps"></div>
+        <p class="feel-close" id="feelClose"></p>
+      </section>
+
+      <section class="card dark">
+        <div class="card-h"><span class="cn">04</span>那天大概会说出的一句话</div>
+        <div class="lines">
+          ${t.lines.map(l => `<div class="line">${l}</div>`).join('')}
+        </div>
+        <div class="prophecy">${prophecy}</div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">05</span>抢救指南</div>
+        <p class="lead">${t.rescue}</p>
+        <p class="tilt">${tiltTxt}</p>
+      </section>
+
+      <section class="card ghost">
+        <div class="card-h"><span class="cn">06</span>次生风险</div>
+        <p class="lead sm">如果主裂缝被修补，你们的第二道口子在 <b>${t2.name}</b>——${t2.tag}。它不会先发作，但会在关系变稳之后浮上来。</p>
+      </section>
+
+      <div class="final-note">
+        这不是命。翻车类型只说明你们的裂缝长在哪，不是说明你们一定会散。
+        <br>很多人是在看到这句话之后，才第一次把那句"没什么"说出口的。
+      </div>
+
+      <div class="res-actions">
+        <button class="btn btn-main" id="share">保存这张诊断卡</button>
+        <button class="btn btn-ghost" id="restart">重新开始</button>
+      </div>
+      <div class="dead-note">该链接已作废 · 无法重答或换人重测</div>
+    </div>
+  `;
+  app.appendChild(wrap);
+
+  /* 体感差异：只写"同一件事你们的感受不同"，不交代任何一方的具体选择 */
+  const gapsBox = $('#gaps');
+  R.topQ.forEach(({ id, q, diff, ache }, i) => {
+    // 分档只看分歧度：分歧越大，越要给出"会咬人"的那一版
+    const band = diff >= 46 ? 'hi' : diff >= 26 ? 'mid' : 'lo';
+    const pool = FEEL[q.id];
+    const txt = pool[band] || pool.mid;
+    const item = el('div', 'gap-item');
+    item.innerHTML = `
+      <div class="gap-idx">${String(i + 1).padStart(2, '0')}</div>
+      <div class="gap-body">
+        <div class="gap-scene">${q.scene}</div>
+        <div class="gap-d">${txt}</div>
+      </div>
+    `;
+    gapsBox.appendChild(item);
+  });
+
+  /* 收束句：如果三处都落在同一维度，加一句维度总结 */
+  const topDims = R.topQ.map(x => x.q.dim);
+  const sameDim = topDims.every(d => d === topDims[0]);
+  $('#feelClose').textContent = sameDim ? FEEL_DIM_CLOSE[topDims[0]] : '';
+  $('#feelClose').style.display = sameDim ? 'block' : 'none';
+  $('#share').onclick = () => {
+    if (window.__pendingShot) return;
+    toast('诊断卡已生成，长按或右键保存图片');
+    buildPoster(R, t, lv);
+  };
+  $('#restart').onclick = () => { location.hash = ''; renderHome(); };
+  window.scrollTo(0, 0);
+}
+
+function toast(msg) {
+  const d = el('div', 'toast', msg);
+  document.body.appendChild(d);
+  setTimeout(() => d.classList.add('in'), 10);
+  setTimeout(() => { d.classList.remove('in'); setTimeout(() => d.remove(), 300); }, 2600);
+}
+
+/* ---------- 诊断卡（Canvas 生成图片） ---------- */
+function buildPoster(R, t, lv) {
+  window.__pendingShot = true;
+  const W = 1080, H = 1440;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+
+  // 背景
+  const bg = g.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#14100f');
+  bg.addColorStop(0.55, '#1b1412');
+  bg.addColorStop(1, '#0e0b0a');
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+
+  // 光斑
+  const rg = g.createRadialGradient(760, 220, 0, 760, 220, 520);
+  rg.addColorStop(0, 'rgba(230,86,52,0.28)');
+  rg.addColorStop(1, 'rgba(230,86,52,0)');
+  g.fillStyle = rg; g.fillRect(0, 0, W, H);
+
+  // 边框
+  g.strokeStyle = 'rgba(240,225,200,0.16)';
+  g.lineWidth = 2;
+  g.strokeRect(48, 48, W - 96, H - 96);
+
+  const F = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif';
+  g.textBaseline = 'top';
+
+  // 顶部标签
+  g.fillStyle = 'rgba(240,225,200,0.55)';
+  g.font = `500 26px ${F}`;
+  g.fillText('FRIENDSHIP CRASH TEST · 双人配对结论', 96, 108);
+
+  // 图标
+  g.font = `80px ${F}`;
+  g.fillText(t.icon, 96, 176);
+
+  // 类型名
+  g.fillStyle = '#f2e7d5';
+  g.font = `700 96px ${F}`;
+  g.fillText(t.name, 96, 292);
+
+  // 副标
+  g.fillStyle = '#e6563a';
+  g.font = `500 40px ${F}`;
+  g.fillText(t.tag, 100, 412);
+
+  // 分隔线
+  g.strokeStyle = 'rgba(240,225,200,0.2)';
+  g.beginPath(); g.moveTo(96, 490); g.lineTo(W - 96, 490); g.stroke();
+
+  // 指数
+  g.fillStyle = 'rgba(240,225,200,0.5)';
+  g.font = `500 30px ${F}`;
+  g.fillText('翻车指数', 100, 536);
+
+  g.fillStyle = '#ff7043';
+  g.font = `800 170px ${F}`;
+  g.fillText(String(R.index), 96, 568);
+
+  g.fillStyle = 'rgba(240,225,200,0.85)';
+  g.font = `500 36px ${F}`;
+  g.fillText(lv.txt, 100, 754);
+
+  // 指数条
+  const bx = 100, bw = W - 200, by = 822;
+  g.fillStyle = 'rgba(240,225,200,0.14)';
+  roundRect(g, bx, by, bw, 14, 7); g.fill();
+  const grd = g.createLinearGradient(bx, 0, bx + bw, 0);
+  grd.addColorStop(0, '#c4452c'); grd.addColorStop(1, '#ff8a5c');
+  g.fillStyle = grd;
+  roundRect(g, bx, by, bw * R.index / 100, 14, 7); g.fill();
+
+  // 主导台词
+  g.fillStyle = '#f2e7d5';
+  g.font = `600 46px ${F}`;
+  wrapText(g, t.killer, 100, 902, W - 200, 68, 3);
+
+  // 高危台词
+  let ly = 1100;
+  g.fillStyle = 'rgba(240,225,200,0.62)';
+  g.font = `400 34px ${F}`;
+  t.lines.slice(0, 3).forEach(l => {
+    g.fillText(l, 100, ly);
+    ly += 56;
+  });
+
+  // 底部
+  g.strokeStyle = 'rgba(240,225,200,0.16)';
+  g.beginPath(); g.moveTo(96, 1300); g.lineTo(W - 96, 1300); g.stroke();
+
+  g.fillStyle = 'rgba(240,225,200,0.42)';
+  g.font = `400 26px ${F}`;
+  g.fillText('两个人各答一次，答案拼合后才出这个结论。', 100, 1336);
+
+  g.fillStyle = '#e6563a';
+  g.font = `600 28px ${F}`;
+  g.textAlign = 'right';
+  g.fillText('友谊翻车预警', W - 100, 1332);
+  g.textAlign = 'left';
+
+  // 输出
+  const url = c.toDataURL('image/png');
+  const old = $('#posterLayer');
+  if (old) old.remove();
+  const layer = el('div', 'poster-layer');
+  layer.id = 'posterLayer';
+  layer.innerHTML = `
+    <div class="poster-inner">
+      <div class="poster-tip">长按图片保存 · 或点击下方按钮下载</div>
+      <img src="${url}" alt="诊断卡">
+      <div class="poster-btns">
+        <a class="btn btn-main" href="${url}" download="友谊翻车预警-${t.name}.png">下载图片</a>
+        <button class="btn btn-ghost" id="closePoster">关闭</button>
+      </div>
+    </div>`;
+  document.body.appendChild(layer);
+  $('#closePoster').onclick = () => { layer.remove(); window.__pendingShot = false; };
+  layer.onclick = e => { if (e.target === layer) { layer.remove(); window.__pendingShot = false; } };
+  window.__pendingShot = false;
+}
+
+function roundRect(g, x, y, w, h, r) {
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r);
+  g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r);
+  g.arcTo(x, y, x + w, y, r);
+  g.closePath();
+}
+function wrapText(g, text, x, y, maxW, lh, maxLines) {
+  let line = '', n = 0;
+  for (const ch of text) {
+    const test = line + ch;
+    if (g.measureText(test).width > maxW && line) {
+      g.fillText(line, x, y); line = ch; y += lh; n++;
+      if (n >= maxLines - 1) { /* 最后一行 */ }
+      if (n >= maxLines) return;
+    } else line = test;
+  }
+  if (line) g.fillText(line, x, y);
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+function boot() {
+  try {
+    const p = parseHash();
+    if (p && p.mode === 'bad') {
+      renderBad(p.reason === 'len'
+        ? '链接长度不对，多半是复制时少了几个字符。'
+        : p.reason === 'sig'
+          ? '这条链接的校验位对不上，内容被改动过。'
+          : '链接里的答案无法识别，可能被改动了。');
+      return;
+    }
+    if (p && p.mode === 'join') {
+      // ---------- 后端模式：状态完全由服务端说了算 ----------
+      if (p.serverId) { bootServerLink(p.serverId); return; }
+
+      // ---------- 纯前端模式 ----------
+      // ① 链接自身说"已作废" —— 任何设备都认
+      if (p.state === 'spent') { renderDead(); return; }
+      // ② 本机曾用过这条（双保险）
+      if (isUsed(p.key)) { renderDead(); return; }
+      // ③ 对方正在作答中
+      if (p.state === 'locked') { renderBusy(); return; }
+      renderInvite(p.code);
+      return;
+    }
+    renderHome();
+  } catch (e) {
+    console.error(e);
+    renderHome();
+  }
+}
+
+/* 后端模式：先问服务端这条链接现在什么状态 */
+async function bootServerLink(id) {
+  const app = $('#app');
+  app.innerHTML = `<div class="screen dead"><div class="dead-inner">
+      <div class="dead-icon">⏳</div>
+      <div class="sub" style="text-align:center">正在确认链接状态…</div>
+    </div></div>`;
+
+  const r = await Backend.getState(id);
+  if (!r.ok) {
+    if (r.offline) return renderBad('连不上服务器，请检查网络后重试。');
+    return renderBad(backendMsg(r.data.error));
+  }
+  const st = r.data.status;
+  if (st === 'spent') return renderDead();
+  if (st === 'revoked') return renderBad('这条链接已被停用。');
+  if (st === 'locked') return renderBusy();
+  // pending → 进入邀请页（带上 serverId）
+  renderInvite(null, id);
+}
+
+/* 有人正在作答这个链接 */
+function renderBusy() {
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="screen dead"><div class="dead-inner">
+      <div class="dead-icon">⏳</div>
+      <h1 class="title sm">这条链接<br><span class="accent">正在作答</span></h1>
+      <p class="sub">同一条链接同一时间只能有一个人在答。<br>如果那是你自己，请回到刚才的页面；<br>如果是别人，等一会儿再看——或者请朋友重新发一条。</p>
+      <div class="rules">
+        <div class="rule-tag">为什么这样设计</div>
+        <p>如果两个人同时答同一条链接，后交卷的那个会覆盖前一个的答案。加这道门槛，是为了保证结果真的属于你们两个人。</p>
+      </div>
+      <button class="btn btn-main" id="again">回到首页</button>
+    </div></div>
+  `;
+  $('#again').onclick = () => { location.hash = ''; renderHome(); };
+}
+
+function renderInvite(code, serverId) {
+  const app = $('#app');
+  app.innerHTML = `
+    <div class="screen invite">
+      <div class="inv-inner">
+        <div class="inv-badge">有人把这条链接发给了你</div>
+        <h1 class="title sm">他先答完了<br><span class="accent">轮到你了</span></h1>
+        <p class="sub">这一步之后，你们两个人的答案会被拼在一起，<br>算出你们最终会因为什么翻车。<br><b>你看不到他选了什么，他也看不到你的。</b></p>
+        <div class="rules warn">
+          <div class="rule-tag">只有一次机会</div>
+          <p>你答完的瞬间就会出结果，这条链接同时作废。中途关掉页面也需要重新拿一条新链接——所以找个安静的地方答完它。</p>
+        </div>
+        <button class="btn btn-main" id="go">我开始答</button>
+        <div class="inv-loading" id="invLoad"></div>
+      </div>
+    </div>
+  `;
+
+  $('#go').onclick = async () => {
+    if (serverId) {
+      // ---- 后端模式：向服务端抢锁，抢到才允许作答 ----
+      const btn = $('#go');
+      btn.disabled = true;
+      btn.textContent = '正在占位…';
+      const r = await Backend.lock(serverId);
+      if (!r.ok) {
+        $('#invLoad').textContent = backendMsg(r.data.error);
+        btn.disabled = false;
+        btn.textContent = '再试一次';
+        return;
+      }
+      state.serverId = serverId;
+      state.lockHeld = true;
+      // 服务端把 A 的答案随抢锁一起下发，本地就能算
+      state._ansA = r.data.code ? decodeAns(r.data.code) : null;
+      if (!state._ansA) {
+        $('#invLoad').textContent = '答案数据异常，请让朋友重新发一条。';
+        btn.disabled = false; btn.textContent = '再试一次';
+        return;
+      }
+      startB(null, serverId);
+      return;
+    }
+    // ---- 纯前端模式：把链接切到"作答中"状态 ----
+    try { history.replaceState(null, '', buildLink(code, 'locked')); } catch (e) { }
+    state.lockHeld = true;
+    startB(code);
+  };
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+window.addEventListener('hashchange', () => { if (!state.result) boot(); });
+</script>
+</body>
+</html>
