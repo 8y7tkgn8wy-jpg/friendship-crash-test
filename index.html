@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0f0c0b">
-<title>友谊翻车预警 · 你和朋友终将因为什么绝交</title>
-<meta name="description" content="双人配对测试：两个人各答一次，答案拼合后算出你们终将因为什么翻车。">
+<title>友谊翻车预警 · 你们的关系最可能在哪儿出问题</title>
+<meta name="description" content="双人关系测试：两个人各答一次，看看这段关系最可能在哪儿出问题。">
 <style>:root {
   --bg: #0f0c0b;
   --bg2: #171110;
@@ -516,6 +516,17 @@ body::before {
   padding-bottom: 30px;
 }
 
+/* 结论回传链接框 */
+.sendback-box {
+  margin: 0 0 18px; padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, .2);
+}
+.sb-title {
+  font-size: 12.5px; color: var(--ink-dim); line-height: 1.6; margin-bottom: 12px;
+}
+.sendback-box .btn { width: 100%; margin-top: 4px; }
+
 /* ================= 海报 ================= */
 .poster-layer {
   position: fixed; inset: 0; z-index: 1000;
@@ -707,6 +718,150 @@ body::before {
   padding: 26px 0 30px;
   text-align: center;
 }
+
+/* ================= 新结果页组件 ================= */
+.home-note {
+  margin-top: 34px;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* 指数分段仪表盘 */
+.gauge {
+  display: flex;
+  gap: 6px;
+  margin: 20px auto 0;
+  max-width: 320px;
+}
+.gauge i {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(242, 231, 213, .1);
+  transition: background .3s;
+}
+.gauge i.on { background: linear-gradient(90deg, #c4452c, #ff8a5c); }
+
+/* 雷达图 */
+.radar {
+  width: 100%;
+  max-width: 340px;
+  margin: 8px auto 4px;
+  display: block;
+}
+.radar-a { fill: rgba(230, 86, 58, .14); stroke: #e6563a; stroke-width: 2; stroke-linejoin: round; }
+.radar-b { fill: rgba(242, 231, 213, .14); stroke: #f2e7d5; stroke-width: 2; stroke-linejoin: round; }
+.radar-label {
+  font-size: 21px;
+  fill: rgba(242, 231, 213, .72);
+  font-family: var(--sans);
+}
+.radar-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+.radar-legend .rdot {
+  width: 9px; height: 9px; border-radius: 50%;
+  display: inline-block; margin-right: 2px;
+}
+.radar-legend .rdot.a { background: #e6563a; }
+.radar-legend .rdot.b { background: #f2e7d5; }
+.radar-legend span:nth-of-type(2) { margin-right: 14px; }
+
+/* 灵魂好友卡片 */
+.soul {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.soul-avatar {
+  flex: none;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 231, 213, .28);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 30px;
+  color: var(--hot2);
+}
+.soul-name {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.soul-line {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--ink-dim);
+}
+
+/* 交友优势 */
+.strengths { display: flex; flex-direction: column; }
+.st-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.st-item:last-child { border-bottom: none; padding-bottom: 0; }
+.st-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.st-name { font-size: 15.5px; font-weight: 600; color: var(--ink); }
+.st-tier {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: .04em;
+}
+.st-tier.t1 { color: #ffb38a; background: rgba(230, 86, 58, .16); }
+.st-tier.t2 { color: var(--ink-dim); background: rgba(242, 231, 213, .08); }
+.st-tier.t3 { color: var(--ink-faint); background: rgba(242, 231, 213, .05); }
+.st-score {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--hot2);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.st-praise { font-size: 13.5px; line-height: 1.75; color: var(--ink-dim); }
+.st-tip { font-size: 12.5px; line-height: 1.7; color: var(--ink-faint); margin-top: 4px; }
+
+/* 需要关注 */
+.gap-item {
+  display: flex;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.gap-item:last-child { border-bottom: none; padding-bottom: 0; }
+.gap-idx {
+  flex: none;
+  font-size: 12px;
+  color: var(--hot2);
+  padding-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.gap-d { font-size: 14px; line-height: 1.8; color: var(--ink-dim); }
+
+/* 收尾 */
+.final-note {
+  font-size: 11px;
+  letter-spacing: .14em;
+  color: var(--ink-faint);
+  text-align: center;
+  padding: 28px 0 8px;
+}
 </style>
 </head>
 <body>
@@ -741,10 +896,10 @@ const QUESTIONS = [
     scene: '关于"多久没联系才算还好"', dim: 'T',
     q: '你们上一次真正聊天（不是点赞）隔了两周。你打开对话框，第一反应是——',
     opts: [
-      { t: '心里冒出"是不是我哪里得罪他了"，先发个"在吗"试探', w: 90 },
-      { t: '直接甩过去三条语音，把这两周攒的全倒出来', w: 74 },
-      { t: '看看他有没有新动态，有再决定要不要开口', w: 48 },
-      { t: '挺好的，各自忙，有事自然会找', w: 22 }
+      { t: '先发"在吗"试探', w: 90 },
+      { t: '甩三条语音，全倒出来', w: 74 },
+      { t: '先看他动态，再决定', w: 48 },
+      { t: '挺好，有事自然会找', w: 22 }
     ]
   },
   {
@@ -752,10 +907,10 @@ const QUESTIONS = [
     scene: '关于"被推掉的约该怎么读"', dim: 'T',
     q: '对方连续三次推掉你的约，理由都很正当。第四次你——',
     opts: [
-      { t: '不再主动约了，但心里已经开始记账', w: 88 },
-      { t: '第四次照约，顺便问一句"你最近是不是不太顺"', w: 62 },
-      { t: '直接说：你这样我要怀疑我们是不是朋友了', w: 80 },
-      { t: '哦，那就等他哪天想起来再说', w: 22 }
+      { t: '不再主动约，开始记账', w: 88 },
+      { t: '照约，问一句最近怎么样', w: 62 },
+      { t: '直接说：我怀疑我们是不是朋友了', w: 80 },
+      { t: '那等他哪天想起来', w: 22 }
     ]
   },
   /* ---- M 边界态度 ---- */
@@ -764,10 +919,10 @@ const QUESTIONS = [
     scene: '关于"我们的场合能不能有别人"', dim: 'M',
     q: '你没提前招呼，就带了另一个朋友来参加你们俩的饭局。你觉得——',
     opts: [
-      { t: '完全没问题，我朋友就是他朋友', w: 26 },
-      { t: '应该先说一声，但说了他一定会同意', w: 55 },
-      { t: '得先问，这是基本礼貌', w: 84 },
-      { t: '我绝不会这么做，二人局就二人局', w: 95 }
+      { t: '没问题，我朋友就是他朋友', w: 26 },
+      { t: '该先说一声，说了他会同意', w: 55 },
+      { t: '得先问，这是礼貌', w: 84 },
+      { t: '我绝不会带人', w: 95 }
     ]
   },
   {
@@ -775,10 +930,10 @@ const QUESTIONS = [
     scene: '关于"手机能不能自己拿"', dim: 'M',
     q: '对方拿起你手机翻相册，说要找你们以前的合照。',
     opts: [
-      { t: '随便翻，我俩之间没这个界限', w: 20 },
-      { t: '行吧，但我眼睛会盯着', w: 52 },
-      { t: '我会说：我给你找，你别自己滑', w: 82 },
-      { t: '不行。这不是关系亲不亲的问题', w: 96 }
+      { t: '随便翻，没这个界限', w: 20 },
+      { t: '行，但我会盯着', w: 52 },
+      { t: '我来找，你别自己滑', w: 82 },
+      { t: '不行，和亲不亲无关', w: 96 }
     ]
   },
   {
@@ -786,10 +941,10 @@ const QUESTIONS = [
     scene: '关于"被当笑话讲的那一刻"', dim: 'M',
     q: '对方在别人面前讲你的糗事，全场都在笑，他也笑得很开心。',
     opts: [
-      { t: '无所谓，能被当笑话讲说明关系够铁', w: 18 },
-      { t: '我也跟着笑，回去再私下说', w: 52 },
-      { t: '笑不出来，但忍着，回去会冷他几天', w: 86 },
-      { t: '当场就笑着怼回去，让他也下一层台', w: 96 }
+      { t: '无所谓，能当笑话说明够铁', w: 18 },
+      { t: '跟着笑，回去私下说', w: 52 },
+      { t: '笑不出，回去冷他几天', w: 86 },
+      { t: '当场笑着怼回去', w: 96 }
     ]
   },
   /* ---- C 冲突姿态 ---- */
@@ -798,10 +953,10 @@ const QUESTIONS = [
     scene: '关于"话说到哪一步该停"', dim: 'C',
     q: '你们吵起来了，对方说了一句明显过线的话。你——',
     opts: [
-      { t: '当场把话顶回去，说清楚他的问题在哪', w: 94 },
-      { t: '不吵了，冷处理，让他自己想', w: 16 },
-      { t: '先忍着，事后发很长一段文字全部讲清楚', w: 72 },
-      { t: '算了，翻篇，下次不提', w: 34 }
+      { t: '当场顶回去，说清他的问题', w: 94 },
+      { t: '不吵了，冷处理', w: 16 },
+      { t: '先忍着，事后发长文', w: 72 },
+      { t: '算了，翻篇不提', w: 34 }
     ]
   },
   {
@@ -809,10 +964,10 @@ const QUESTIONS = [
     scene: '关于"冷战里谁先开口"', dim: 'C',
     q: '吵架之后，谁是先开口的那个？',
     opts: [
-      { t: '必须是他先说，我说了就等于我错了', w: 96 },
-      { t: '谁错谁先，这很公平', w: 62 },
-      { t: '我一般会先发个无关的东西试探', w: 76 },
-      { t: '我扛不住冷战，通常我先', w: 20 }
+      { t: '必须他先说，说了我就输了', w: 96 },
+      { t: '谁错谁先，公平', w: 62 },
+      { t: '先发个无关的东西试探', w: 76 },
+      { t: '扛不住冷战，通常我先', w: 20 }
     ]
   },
   /* ---- R 回应力 ---- */
@@ -821,10 +976,10 @@ const QUESTIONS = [
     scene: '关于"凌晨那条消息该多快被接住"', dim: 'R',
     q: '凌晨两点，你情绪很糟，发了一条很长的消息给他。',
     opts: [
-      { t: '希望他立刻回，哪怕只回一句"我在"', w: 95 },
-      { t: '希望他回，但不回我也不会记恨', w: 55 },
-      { t: '其实只是想说，第二天看到也行', w: 42 },
-      { t: '我不太会这样发消息，我会自己扛过去', w: 25 }
+      { t: '希望立刻回，哪怕一句"我在"', w: 95 },
+      { t: '希望回，不回也不记恨', w: 55 },
+      { t: '只是想说，第二天看到也行', w: 42 },
+      { t: '不会这样发，我自己扛', w: 25 }
     ]
   },
   {
@@ -832,10 +987,10 @@ const QUESTIONS = [
     scene: '关于"十分钟的絮叨值不值得听完"', dim: 'R',
     q: '他兴冲冲跟你讲一件你完全不感兴趣的事，讲了十分钟。',
     opts: [
-      { t: '我会跟着问，让他讲完，他开心我也开心', w: 82 },
-      { t: '我会听，但会找机会岔开话题', w: 50 },
-      { t: '我会直接说：这我真不懂，换个话题', w: 32 },
-      { t: '我会假装在看手机，让他自己讲完', w: 18 }
+      { t: '跟着问，让他讲完', w: 82 },
+      { t: '会听，但找机会岔开', w: 50 },
+      { t: '直接说：这我真不懂', w: 32 },
+      { t: '假装看手机', w: 18 }
     ]
   },
   {
@@ -843,10 +998,10 @@ const QUESTIONS = [
     scene: '关于"好意该不该拦一下"', dim: 'R',
     q: '他做了个明显不靠谱的决定，正在兴头上。你会——',
     opts: [
-      { t: '泼冷水，现在不说以后更麻烦', w: 86 },
-      { t: '先支持，等他冷静了再提一句', w: 60 },
-      { t: '问他要不要听听我的看法，然后照着说', w: 72 },
-      { t: '不说，他自己的路，撞了才知道', w: 24 }
+      { t: '泼冷水，现在不说更麻烦', w: 86 },
+      { t: '先支持，冷静了再提', w: 60 },
+      { t: '问他要不要听我的看法', w: 72 },
+      { t: '不说，他自己的路', w: 24 }
     ]
   },
   /* ---- V 价值尺度 ---- */
@@ -855,10 +1010,10 @@ const QUESTIONS = [
     scene: '关于"朋友之间的钱怎么说清"', dim: 'V',
     q: '他开口借一笔对你来说不小的钱，用途说得含糊。',
     opts: [
-      { t: '直接借，朋友之间问那么多干嘛', w: 30 },
-      { t: '借，但会问清楚用途和还款时间', w: 68 },
-      { t: '会借一部分，剩下的说清楚我的难处', w: 74 },
-      { t: '不借。钱一旦进来，关系就变味了', w: 92 }
+      { t: '直接借，问那么多干嘛', w: 30 },
+      { t: '借，但问清用途和还期', w: 68 },
+      { t: '借一部分，说清难处', w: 74 },
+      { t: '不借，钱进来关系就变味', w: 92 }
     ]
   },
   {
@@ -866,10 +1021,10 @@ const QUESTIONS = [
     scene: '关于"闹翻了该站哪一边"', dim: 'V',
     q: '他跟另一个人闹翻了，来跟你吐槽，而那个人跟你也还行。',
     opts: [
-      { t: '无条件站他，他对我来说更重要', w: 93 },
-      { t: '听他说，但我不会跟着一起骂', w: 58 },
-      { t: '会替那个人解释两句，讲我看到的一面', w: 72 },
-      { t: '我不想被卷进去，尽量不表态', w: 22 }
+      { t: '无条件站他', w: 93 },
+      { t: '听他说，不跟着骂', w: 58 },
+      { t: '替那个人解释两句', w: 72 },
+      { t: '不表态，不卷进去', w: 22 }
     ]
   },
   {
@@ -877,10 +1032,10 @@ const QUESTIONS = [
     scene: '关于"朋友能不能点评你的人生"', dim: 'V',
     q: '他对你的人生选择（工作、对象、要不要生）说了一句很直的评语。',
     opts: [
-      { t: '我听得进去，说得对我就改', w: 28 },
-      { t: '我不爱听，但他有这个资格说', w: 50 },
-      { t: '会当场不舒服，但不会发作', w: 74 },
-      { t: '这越过界了，我的人生不接受点评', w: 96 }
+      { t: '听得进去，对就改', w: 28 },
+      { t: '不爱听，但他有资格说', w: 50 },
+      { t: '当场不舒服，不发作', w: 74 },
+      { t: '越界了，不接受点评', w: 96 }
     ]
   }
 ];
@@ -888,12 +1043,12 @@ const QUESTIONS = [
 /* 自评题：不参与维度，但修正"翻车力度"（自我中心的坦诚度） */
 const SELF_Q = {
   id: 'self',
-  q: '最后一句实话：这段关系里，谁更容易先觉得"被辜负"？',
+  q: '最后一句：谁更容易先觉得被辜负？',
   opts: [
-    { t: '我。我常常觉得自己付出得更多', v: 3 },
-    { t: '五五开，看事情', v: 2 },
-    { t: '他。他更敏感一点', v: 1 },
-    { t: '说不清，我们俩都挺拧的', v: 2 }
+    { t: '我，常觉得自己付出更多', v: 3 },
+    { t: '五五开', v: 2 },
+    { t: '他，更敏感一点', v: 1 },
+    { t: '说不清', v: 2 }
   ]
 };
 
@@ -910,22 +1065,22 @@ const CRASH_TYPES = [
     name: '无声退场型',
     tag: '不吵架，也不联系了',
     icon: '🌫',
-    lead: '你们之间不会有任何一场爆发。只是某天你翻聊天记录，发现上一句还是三个月前的"哈哈哈"。',
-    killer: '你们俩都在等对方先开口，然后一起等成了陌生人。',
+    lead: '没有哪次爆发，只是翻聊天记录时发现，上一句已经是三个月前。',
+    killer: '你们都在等对方先开口，最后一起等成了陌生人。',
     lines: ['"最近忙吗？"（其实已经想了三天）', '"改天约"（双方都知道这个改天不会来）', '"他应该也挺忙的吧"'],
-    rescue: '定一个不需要理由的联系节奏——比如每月一次固定通话，内容不重要，存在本身是重点。你们的问题不是没感情，是没人愿意当那个"看起来更在意的人"。',
+    rescue: '定一个不用找理由的联系节奏，比如每月固定一通电话。缺的不是感情，是有人先做那个"看起来更在意的人"。',
     vec: { T: 1.0, M: 0.1, C: 0.5, R: 0.15, V: 0.1 }
   },
   {
     id: 'score',
     focus: 'C', sub: 'M',
     name: '记账清算型',
-    tag: '每一笔都记着，只是没结账',
+    tag: '每一笔都记着',
     icon: '🧾',
-    lead: '你记得他三次推掉你的约，也记得那次他一句话就让你在饭桌上僵住。这些事你没提，但你一件都没忘。',
-    killer: '终结点往往不是大事，而是一件很小的、完全不成比例的事，你把三年的账一次性倒出来。',
+    lead: '那些没提的事，一件都没忘，只是一直没结账。',
+    killer: '翻脸常常不是因为大事，而是某天把攒了很久的账一次倒出来。',
     lines: ['"我早就想说了。"', '"上次你不也是这样？"', '"行，那我把话讲清楚。"'],
-    rescue: '把"记账"改成"当日结"。小事当天说一句"刚才那句我有点不舒服"，比憋三年后清算省太多。你们不是没有话说，是把话都存成了弹药。',
+    rescue: '把记账改成当日结：小事当天说一句"刚才那句我不太舒服"。话存成弹药，最后炸的是关系。',
     vec: { T: 0.55, M: 0.7, C: 0.85, R: 0.4, V: 0.5 }
   },
   {
@@ -934,10 +1089,10 @@ const CRASH_TYPES = [
     name: '越界窒息型',
     tag: '太熟了，熟到没有门',
     icon: '🚪',
-    lead: '你们的关系没有门。他推门就进，你也一样。一开始这叫亲密，后来这叫没有退路。',
-    killer: '你终于说了句"你能不能别这样"，他愣住："我们之间还要这样？"——那一秒，关系就变了。',
+    lead: '这段关系没有门，推门就进。一开始叫亲密，后来叫没有退路。',
+    killer: '"能不能别这样"说出口，对方愣住："我们之间还要这样？"——关系从这一刻开始变。',
     lines: ['"我们之间还分这么清？"', '"你变了。"', '"我不就是随便看看。"'],
-    rescue: '明确说出你的边界，并且承担"被说变了"的代价。真正的朋友会调整，只想占便宜的人会生气。分辨这两者，比维持关系更重要。',
+    rescue: '把边界说清楚，并接受对方可能觉得"你变了"。愿意调整的是朋友，只生气的人本来就想占便宜。',
     vec: { T: 0.2, M: 5.0, C: 0.4, R: 0.2, V: 0.35 }
   },
   {
@@ -946,10 +1101,10 @@ const CRASH_TYPES = [
     name: '冷战内耗型',
     tag: '谁先开口，谁就输了',
     icon: '🧊',
-    lead: '你们的争吵从来不会结束，只会暂停。暂停期间双方都在等，等一句其实谁都可以先说的话。',
-    killer: '冷战的长度最终超过了感情的耐力。等到有人愿意开口，发现已经没什么可说的了。',
+    lead: '争吵不结束，只是暂停。',
+    killer: '冷战的时间，最后会比感情更长。',
     lines: ['（已读不回，第 11 天）', '"没事。"', '"我没什么好说的。"'],
-    rescue: '把"先开口"从输赢里拿出来。你们可以吵，但约定一条：不超过 48 小时不联系。冷战不是解决问题的方式，它只是把问题冻起来，冻久了会裂。',
+    rescue: '把"先开口"从输赢里拿掉，约定冷战不超过 48 小时。冻太久的问题，最后会裂。',
     vec: { T: 0.6, M: 0.25, C: 5.0, R: 0.35, V: 0.2 }
   },
   {
@@ -958,22 +1113,22 @@ const CRASH_TYPES = [
     name: '单向耗竭型',
     tag: '一个人一直在接球',
     icon: '🏸',
-    lead: '有一个人永远在听、在回、在体谅、在替对方找理由。另一个人觉得这一切理所当然。',
-    killer: '付出的一方不是被某件事击垮的，是被"又一次"击垮的。某天他只是不想回了，然后就再也没回。',
+    lead: '有一个人一直在听、在回、在体谅；另一个把这当成默认。',
+    killer: '付出的一方不是被大事击垮，是被"又一次"击垮的。',
     lines: ['"我最近是真的忙。"', '"你怎么突然这样？"', '（对方甚至不知道发生过什么）'],
-    rescue: '失衡的关系不会自己回正。要么明确要求对方承担一半，要么接受这段关系只能这么深。最糟的是继续假装平衡，一边付出一边积怨。',
+    rescue: '失衡的关系不会自己回正。要么明确要求对方承担一半，要么接受它只能走到这个深度。',
     vec: { T: 0.45, M: 0.3, C: 0.5, R: 5.0, V: 0.3 }
   },
   {
     id: 'valueclash',
     focus: 'V', sub: 'C',
     name: '三观断裂型',
-    tag: '某天发现，你们不是一路人',
+    tag: '某天发现不是一路人',
     icon: '⚡',
-    lead: '你们的默契曾经很好，好到掩盖了一个事实：在真正重要的事情上，你们从来没认真对过答案。',
-    killer: '一次借钱、一次站队、一次对彼此人生的点评，把"我们很像"这句话直接拆了。',
+    lead: '在真正重要的事情上，其实从来没对过答案。',
+    killer: '一次借钱、一次站队、一次点评，就能把"我们很像"拆掉。',
     lines: ['"你居然是这么想的？"', '"我没想到你是这种人。"', '"算了，不说这个了。"（然后真的不说了）'],
-    rescue: '三观不必完全一致，但必须知道彼此的分歧在哪，并且约定哪些话题不动。真正杀死关系的不是分歧，是发现分歧后那种"原来我一直在跟一个陌生人吃饭"的失重感。',
+    rescue: '不必完全一致，但要知道分歧在哪，并约定哪些话题不碰。伤人的不是分歧，是发现分歧后的陌生感。',
     vec: { T: 0.2, M: 0.4, C: 0.5, R: 0.3, V: 5.0 }
   },
   {
@@ -982,10 +1137,10 @@ const CRASH_TYPES = [
     name: '时差错频型',
     tag: '一个还在原地，一个已经走远',
     icon: '⏳',
-    lead: '你们的交情建立在某个具体的人生段落里——同宿舍、同公司、同一座城。那个段落结束了，连接就开始松动。',
-    killer: '不是谁变了。是你们的"共同语言"变少的速度，超过了感情消耗的速度。',
+    lead: '交情绑在某个具体阶段：同宿舍、同公司、同一座城。阶段结束，连接就松了。',
+    killer: '不是谁变了，是共同语言变少的速度，超过了感情。',
     lines: ['"你那边怎么样？" "还行。"', '（开始回忆往事，因为当下没得聊）', '"有空来玩啊"（谁都知不会来）'],
-    rescue: '给关系换一个载体。靠回忆维持的友谊会逐年稀薄，要找到新的共同事——一起做点什么，而不是一起回忆什么。',
+    rescue: '给关系换个载体。靠回忆维持的友谊会逐年稀薄，不如一起做点新的事。',
     vec: { T: 5.0, M: 0.2, C: 0.3, R: 0.4, V: 0.3 }
   },
   {
@@ -994,10 +1149,10 @@ const CRASH_TYPES = [
     name: '慢性消磨型',
     tag: '没有凶手，只有时间',
     icon: '🕯',
-    lead: '你们之间没有任何一个能拿出来说的问题。每次见面都挺好，就是见面越来越少，间隔越来越长。',
-    killer: '没有一场事故。只是各自的生活把人拉走，而你们都没觉得需要往回拉一把。',
+    lead: '每次见面都挺好，只是间隔越来越长。',
+    killer: '没有事故，只是各自的生活把人拉走，又都没往回拉一把。',
     lines: ['"感觉我们好久没见了。"', '"下次一定。"', '"他应该过得挺好的吧。"'],
-    rescue: '这种关系不是坏了，是没人管了。要么主动给它一点维护成本，要么坦然接受它会变成"曾经很好的朋友"。两种都不算失败，怕的是一边怀念一边不动。',
+    rescue: '要么主动给它一点维护成本，要么接受它变成"曾经很好的朋友"。怕的是一边怀念一边不动。',
     vec: { T: 0.85, M: 0.6, C: 0.6, R: 0.7, V: 0.6 }
   },
   {
@@ -1006,10 +1161,10 @@ const CRASH_TYPES = [
     name: '隐秘比较型',
     tag: '我为你高兴，但只有一点点',
     icon: '🪞',
-    lead: '你们关系很好，好到能说真话。但每次一方往上走，另一方的"真话"里就多了一点别的味道。',
-    killer: '不是嫉妒本身，是嫉妒被说出来、又被听出来的那一刻。你们都没法假装没听出来。',
+    lead: '关系好到能说真话，但一方往上走时，真话里就多了点别的味道。',
+    killer: '不是嫉妒本身，是嫉妒被听出来的那一刻。',
     lines: ['"挺好的，适合你。"（停顿有点长）', '"你现在不一样了。"', '"没有没有，我是真心为你高兴。"'],
-    rescue: '承认比较心存在，并且把它和"我希望你好"分开。能同时装下这两件事的友谊才是真的。如果说不出口，就别用"为你好"包装，那比沉默伤人。',
+    rescue: '承认比较心存在，并把它和"我希望你好"分开。说不出口，就别用"为你好"包装。',
     vec: { T: 0.3, M: 0.5, C: 0.6, R: 0.55, V: 1.9 }
   },
   {
@@ -1018,10 +1173,10 @@ const CRASH_TYPES = [
     name: '工具化警觉型',
     tag: '需要你的时候，你很清楚',
     icon: '🔧',
-    lead: '他对你不是不好。只是他找你的时候，通常都带着一件具体的事。你也一样，只是你不愿意承认。',
-    killer: '某次你真的需要他，他没空。你突然想通：哦，原来这个通道是单向的。',
+    lead: '找的次数不少，但每次几乎都带着一件具体的事。',
+    killer: '某次真的需要对方，对方没空，才想通：这个通道是单向的。',
     lines: ['"在吗？帮个忙。"', '"这次真的只有你能帮我。"', '"改天请你吃饭。"（从未发生）'],
-    rescue: '不必撕破脸，但需要重新标定这段关系的性质。它可能是"资源互换"而非"朋友"，这没有错，错的是你一直按朋友的标准去期待。降低预期，比提高要求更省力。',
+    rescue: '不必撕破脸，重新标定这段关系：是资源互换，还是朋友。降低期待，比提高要求省力。',
     vec: { T: 0.4, M: 0.6, C: 0.3, R: 1.7, V: 1.6 }
   }
 ];
@@ -1066,117 +1221,91 @@ const GAPTEXT = {
    ============================================================ */
 const FEEL = {
   q1: {
-    hi: '同样是两周没说话，在一个人心里是"我们是不是出事了"，在另一个人心里只是"这两周有点忙"。两种都不是错，只是重量不同。',
-    mid: '沉默这件事，你们大概都有自己的解释。怕的是两个人都觉得对方应该先懂。',
-    lo: '这一项上你们的刻度接近，安静不太会成为问题。'
+    hi: '联系频率：久不联系时，这段关系容易先在心里起误会。',
+    mid: '联系频率：偶尔会踩空，但不至于出问题。',
+    lo: '联系频率：基本合拍。'
   },
   q2: {
-    hi: '被推掉的那几次，有人会当成"他有事"，有人会悄悄记成"我好像没那么重要"。这两种记账方式，很难对得上账。',
-    mid: '取消约定这件事，一个想的是行程，一个想的是态度。错位往往就发生在这一层。',
-    lo: '这一项上你们读得很近，被推掉也不太会往心里去。'
+    hi: '被推掉的约：几次下来，容易积成没说破的心结。',
+    mid: '被推掉的约：对"忙还是不在意"的判断可能不同步。',
+    lo: '被推掉的约：不会太往心里去。'
   },
   q3: {
-    hi: '多带一个人来，有人觉得是热闹，有人觉得是被占了位子。谁都没说出口，但那一刻的气氛，两个人体感并不一样。',
-    mid: '你们的场合边界没有完全对齐，但还不至于难堪。',
-    lo: '这一项上你们的默契不错，不太会为"谁该在场"别扭。'
+    hi: '带人入局："我们的场合"这条线，容易先僵住。',
+    mid: '带人入局：该不该提前说，敏感度略有差别。',
+    lo: '带人入局：分寸基本一致。'
   },
   q4: {
-    hi: '手机这个动作，一个人做的时候觉得是"我们之间还分这个"，另一个人被翻的时候，心里会有一瞬间的紧绷。那一下很短，但确实存在。',
-    mid: '亲密到什么程度算刚好，你们心里各有一把尺，只是刻度略有差别。',
-    lo: '这一项上你们对"哪儿不该伸手"的看法接近。'
+    hi: '越界动作：翻手机这类事，界限可能比想象中更模糊。',
+    mid: '越界动作：尺度略有出入。',
+    lo: '越界动作：看法接近。'
   },
   q5: {
-    hi: '同一句玩笑，一个人在笑，一个人在等它过去。都不是小气，是那个瞬间被放的位置不一样。',
-    mid: '被当作笑料的时候，你们的承受阈值不太一样。多数时候能过去，偶尔会留下一点什么。',
-    lo: '这一项上你们的分寸感挨得很近，不太会在这里失手。'
+    hi: '当众玩笑：笑声里容易埋下不快。',
+    mid: '当众玩笑：感受强度可能不同，多数能过去。',
+    lo: '当众玩笑：分寸感一致。'
   },
   q6: {
-    hi: '话顶到那一步，有人要当场把它说清，有人需要先离开那个房间。两种都是自我保护的姿势，只是方向相反。',
-    mid: '起冲突的时候，你们的节奏不太同步。一个还在原地，另一个已经不打算继续了。',
-    lo: '这一项上你们吵起来的姿势相似，不太会互相误读。'
+    hi: '冲突节奏：想当面说清和想先离开，是两种不同的节奏。',
+    mid: '冲突节奏：不太同步。',
+    lo: '冲突节奏：比较接近。'
   },
   q7: {
-    hi: '冷战里最难的不是生气，是等。有人能一直等下去，有人在等的过程中，会一点点确认"原来可以没有我"。',
-    mid: '和好这件事，你们谁先迈那一步，好像一直没有明确过。',
-    lo: '这一项上你们对沉默的耐性接近，不容易拖成僵局。'
+    hi: '和好：容易拖成冷战，谁先开口一直没默契。',
+    mid: '和好：谁先开口，一直没有默契。',
+    lo: '和好：对沉默的耐性接近。'
   },
   q8: {
-    hi: '凌晨那条很长的消息，发的人是在求救，收到的人可能第二天才看见。这中间没有谁不够好，只是时区不一样。',
-    mid: '被回应这件事，你们需要的量不太一样。多数时候能补上，少数时候会空着。',
-    lo: '这一项上你们对回应的期待差不多，落空的机会不多。'
+    hi: '被回应：需要的量和速度可能对不上，一方容易落空。',
+    mid: '被回应：给得出，但时间点未必对。',
+    lo: '被回应：供需基本平衡。'
   },
   q9: {
-    hi: '同一段十分钟的讲述，讲的人在靠近，听的人可能已经在心里走神。这种温差很隐蔽，但会累积。',
-    mid: '耐心这件事，你们给得出，只是不一定给在同一个时候。',
-    lo: '这一项上你们的耐心水平接近，不太会为这个失衡。'
+    hi: '倾听：耐心可能对不上，一方容易先走神。',
+    mid: '倾听：耐心值略有差别。',
+    lo: '倾听：耐心接近。'
   },
   q10: {
-    hi: '一个想伸手拦一下，一个只想被祝福。出发点是关心，落点却是"你凭什么管我"。',
-    mid: '好意和边界，在你们之间偶尔会撞一下，但还不是硬伤。',
-    lo: '这一项上你们的分寸感很接近，好意在你们之间不太会变形。'
+    hi: '关心：想拦和只想被支持，是两种不同的表达。',
+    mid: '关心：好意和边界偶尔会撞。',
+    lo: '关心：分寸一致。'
   },
   q11: {
-    hi: '关于钱的那句话最难说。一个人觉得"问清楚才叫尊重"，另一个人听到的是"你不信我"。两句话之间没有翻译。',
-    mid: '钱和交情在你们之间还没有真正搅在一起过，但已经能看出一点倾向。',
-    lo: '这一项上你们对钱的边界感接近，不太会在这里翻船。'
+    hi: '钱：最需要说清楚的地方。',
+    mid: '钱：还没真正混在一起，但倾向已现。',
+    lo: '钱：边界感接近。'
   },
   q12: {
-    hi: '站队这件事，有人觉得义气就是无条件，有人觉得不表态才是对所有人都公平。两种都叫讲道理，只是讲的不是同一套道理。',
-    mid: '遇到"你帮谁"的时刻，你们可能会各自沉默一会儿。',
-    lo: '这一项上你们的站队逻辑接近，不太会为选边为难。'
+    hi: '站队：对"义气"的理解不同，遇到选择时容易各自沉默。',
+    mid: '站队：可能都先观望。',
+    lo: '站队：逻辑接近。'
   },
   q13: {
-    hi: '一句直话，说的人觉得是掏心，听的人可能觉得是被点评了人生。这两个动作长得很像，感受完全不同。',
-    mid: '关于"我们能管对方到哪一步"，你们心里各有答案。',
-    lo: '这一项上你们对"能管到哪"的分寸接近。'
+    hi: '能管到哪："朋友能管到哪一步"，需要提前说清。',
+    mid: '能管到哪：各有答案。',
+    lo: '能管到哪：分寸接近。'
   }
 };
 
-/* 维度级补充：当三处都落在同一维度时，用这句收 */
-const FEEL_DIM_CLOSE = {
-  T: '说到底，你们的裂缝不是感情淡了，是"多久没联系才算淡"这个刻度不一样。',
-  M: '说到底，你们的裂缝不是不亲，是"多亲才算亲"的门槛不一样。',
-  C: '说到底，你们的裂缝不是有仇，是"这件事该不该说出口"的时机不一样。',
-  R: '说到底，你们的裂缝不是不关心，是"关心该怎么送到"的方式不一样。',
-  V: '说到底，你们的裂缝不是谁错了，是"什么才叫对"的答案不一样。'
+/* 灵魂好友类型：按答题者本人最突出的维度，映射到一位历史人物 */
+const SOUL_TYPES = {
+  T: { name: '杜甫', tag: '深情牵挂', line: '你们把对方放在心上的时间，比见面的时间多，很久不联系也一直有位置。' },
+  M: { name: '庄子', tag: '淡而有界', line: '你们亲近但不黏，需要时出现，平时各忙各的，谁也不欠谁。' },
+  C: { name: '嵇康', tag: '当面说清', line: '你们不喜欢猜，高兴就说、不舒服也直说，合得来深交，合不来摊开。' },
+  R: { name: '钟子期', tag: '接得住你', line: '你们听得懂对方没说出口的那半句，话不多，但总能接在点子上。' },
+  V: { name: '管宁', tag: '原则分明', line: '你们把原则看得很重，聊得来是朋友，道不同就干脆各走各的。' },
+  X: { name: '苏轼', tag: '豁达松弛', line: '你们能一起吃饭喝酒、也能互相拆台，事过就翻篇，谁也不端着。' }
 };
 
-const BASELINE_TEXT = {
-  T: '你们都会主动，也都容得下安静，这一块不是雷区。',
-  M: '你们彼此留门，知道哪里不该伸手。',
-  C: '你们不太会正面撞上，冲突成本低。',
-  R: '你们对"要回多快"都没有执念，少了这一层拉扯。',
-  V: '你们在钱和立场上各自有分寸，还没到需要摊牌的时候。'
-};
-
-/* 高危台词：按维度挑一句 */
-const PROPHECY = {
-  T: {
-    hi: '你们会在"好久没聊了"这句话里卡住好几次',
-    mid: '你们的联系会慢慢变成只在生日和过年出现',
-    lo: '你们本来就习惯各过各的，这一点反而不是问题'
-  },
-  M: {
-    hi: '你们会为"这点事也要计较？"这句话翻脸一次以上',
-    mid: '你们会在某次越界后，各自沉默地重新画一条线',
-    lo: '你们彼此留门，这大概是最不容易出事的地方'
-  },
-  C: {
-    hi: '你们的争吵会以"谁先说话"收场，而不是谁对',
-    mid: '你们吵得起来也停得下来，只是每次都会留一点疙瘩',
-    lo: '你们不太吵，但也不太把话说透'
-  },
-  R: {
-    hi: '有一方会先停止回应，然后另一方会记很久',
-    mid: '你们的接球水平不太对等，但还在可修复的范围',
-    lo: '你们都不太期待对方接住自己，这既是自由也是距离'
-  },
-  V: {
-    hi: '真正让你们翻的，会是某次立场表态，而不是感情本身',
-    mid: '你们在某些事上其实不是一路人，只是还没碰上',
-    lo: '你们的价值底线比较接近，这能兜住很多事'
-  }
-};
+/* 交友优势：按答题者本人各维度得分换算成 16 分制，展示最高的 3 项 */
+const STRENGTHS = [
+  { key: 'T', name: '重感情', praise: '你把朋友放在心上，久不联系也惦记。', tip: '定期给老朋友发一句问候，哪怕只是个表情。' },
+  { key: 'M', name: '有分寸', praise: '你懂得尊重界限，相处起来让人安心。', tip: '偶尔也主动说一句"需要我的时候，直接讲"。' },
+  { key: 'C', name: '够坦诚', praise: '你不藏话，有什么当面讲清，关系反而干净。', tip: '直说前先给对方一个台阶，话说重了记得补一句。' },
+  { key: 'R', name: '会接球', praise: '你接得住朋友的情绪，是让人想倾诉的人。', tip: '倾听时先别说教，先说一句"我懂"。' },
+  { key: 'V', name: '讲原则', praise: '你重情也重原则，答应的事靠得住。', tip: '立场不合时，先听完对方的理由再下判断。' },
+  { key: 'X', name: '不较真', praise: '你对关系不苛刻，给朋友的空间够。', tip: '需要时也主动表达一次自己的感受，别总憋着。' }
+];
 </script>
 <script>/* ============================================================
    配对算法 v4
@@ -1302,11 +1431,30 @@ function pairAnalyze(ansA, ansB) {
 }
 
 function levelOf(index) {
-  if (index >= 85) return { txt: '高危 · 只差一根火柴', cls: 'lv5' };
-  if (index >= 72) return { txt: '偏高 · 裂缝已成形', cls: 'lv4' };
-  if (index >= 58) return { txt: '中等 · 有隐患但可控', cls: 'lv3' };
-  if (index >= 45) return { txt: '偏低 · 有点小疙瘩', cls: 'lv2' };
-  return { txt: '稳定 · 你们挺耐的', cls: 'lv1' };
+  if (index >= 85) return { txt: '较高', cls: 'lv5' };
+  if (index >= 72) return { txt: '偏高', cls: 'lv4' };
+  if (index >= 58) return { txt: '中等', cls: 'lv3' };
+  if (index >= 45) return { txt: '偏低', cls: 'lv2' };
+  return { txt: '较低', cls: 'lv1' };
+}
+
+/* 灵魂好友类型：本人最突出维度 → 历史人物；过于平均时归为苏轼（均衡） */
+function soulTypeOf(dimScore) {
+  const vals = DIM_KEYS.map(k => dimScore[k] || 0);
+  const max = Math.max(...vals), min = Math.min(...vals);
+  if (max - min <= 10) return SOUL_TYPES.X;
+  return SOUL_TYPES[DIM_KEYS[vals.indexOf(max)]] || SOUL_TYPES.X;
+}
+
+/* 交友优势：本人各维度换算 16 分制，取最高 3 项；"不较真"取整体松弛度 */
+function strengthsOf(dimScore) {
+  const mean = DIM_KEYS.reduce((s, k) => s + (dimScore[k] || 0), 0) / DIM_KEYS.length;
+  return STRENGTHS.map(s => {
+    const raw = s.key === 'X' ? (100 - mean) : (dimScore[s.key] || 0);
+    const score16 = Math.max(0, Math.min(16, Math.round(raw / 100 * 16)));
+    const tier = score16 >= 11 ? '强项' : score16 >= 7 ? '平稳' : '待提升';
+    return { name: s.name, praise: s.praise, tip: s.tip, score16, tier };
+  }).sort((a, b) => b.score16 - a.score16).slice(0, 3);
 }
 </script>
 <script>/* ============================================================
@@ -1562,6 +1710,13 @@ function parseHash() {
     return { mode: 'join', serverId: id, code: null, state: 'unknown', valid: true, key: id };
   }
 
+  // 结论回传：#r1<13位结论码>（对方把结论发回给生成者，不含原始答案）
+  if (compact.indexOf(RES_MAGIC) === 0 && compact.length === RES_MAGIC.length + RES_CHARS) {
+    const data = decodeResult(compact.slice(RES_MAGIC.length));
+    if (data) return { mode: 'result', data, valid: true, key: 'r' + compact.slice(RES_MAGIC.length) };
+    return { mode: 'bad', reason: 'code' };
+  }
+
   if (compact.length === 8) {
     const code = compact.slice(0, 6), s = compact.slice(6);
     const ans = decodeAns(code);
@@ -1589,6 +1744,89 @@ function buildLink(code, stage, serverId) {
     : stage === 'locked' ? SALT_LOCKED : SALT_PENDING;
   const full = code + sigWith(code, salt);
   return `${base}#${full}`;
+}
+
+/* ---------- 结论回传：把结果压成短链接，发回给生成者 ----------
+   只携带「渲染结论所需」的数据（类型/指数/维度占比/三处体感档位），
+   不含任何一方的原始答案，隐私与一次性机制不受影响。
+   ---------------------------------------------------------- */
+const RES_MAGIC = 'r2';
+// 位宽：index, prim, sec, domK, lift, (q,b)×3, share×5, dimA×5, dimB×5
+const RES_WIDTHS = [7, 4, 4, 3, 2, 4, 2, 4, 2, 4, 2, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7];
+const RES_CHARS = 24;   // 24 × 6 = 144 bit，装得下 143 bit
+
+function encodeResult(R) {
+  const prim = Math.max(0, CRASH_TYPES.findIndex(t => t.id === R.primary.type.id));
+  const sec = Math.max(0, CRASH_TYPES.findIndex(t => t.id === R.secondary.type.id));
+  const liftTier = R.domLift > 0.62 ? 2 : R.domLift > 0.3 ? 1 : 0;
+  const tops = R.topQ.slice(0, 3).map(x => {
+    const qi = Math.max(0, QUESTIONS.findIndex(q => q.id === x.q.id));
+    const band = x.diff >= 46 ? 2 : x.diff >= 26 ? 1 : 0;
+    return [qi, band];
+  });
+  const sharePct = DIM_KEYS.map(k => Math.max(0, Math.min(99, Math.round(R.share[k] * 100))));
+  const clamp7 = v => Math.max(0, Math.min(99, Math.round(v || 0)));
+  const dimA = DIM_KEYS.map(k => clamp7(R.A && R.A.dimScore ? R.A.dimScore[k] : 0));
+  const dimB = DIM_KEYS.map(k => clamp7(R.B && R.B.dimScore ? R.B.dimScore[k] : 0));
+  const vals = [R.index, prim, sec, DIM_KEYS.indexOf(R.domK), liftTier]
+    .concat(tops[0], tops[1], tops[2])
+    .concat(sharePct, dimA, dimB);
+  let n = 0n;
+  for (let i = 0; i < RES_WIDTHS.length; i++) {
+    n = (n << BigInt(RES_WIDTHS[i])) | BigInt(vals[i] || 0);
+  }
+  let s = '';
+  for (let i = 0; i < RES_CHARS; i++) {
+    s = B64U[Number(n & 63n)] + s;
+    n >>= 6n;
+  }
+  return s;
+}
+
+function decodeResult(s) {
+  if (typeof s !== 'string' || s.length !== RES_CHARS) return null;
+  let n = 0n;
+  for (const c of s) {
+    const i = B64U.indexOf(c);
+    if (i < 0) return null;
+    n = (n << 6n) | BigInt(i);
+  }
+  const vals = [];
+  let used = 0;
+  const totalBits = RES_WIDTHS.reduce((a, b) => a + b, 0);
+  for (const w of RES_WIDTHS) {
+    const shift = BigInt(totalBits - used - w);
+    vals.push(Number((n >> shift) & ((1n << BigInt(w)) - 1n)));
+    used += w;
+  }
+  const [index, prim, sec, domKi, liftTier, q0, b0, q1, b1, q2, b2, sT, sM, sC, sR, sV, aT, aM, aC, aR, aV, bT, bM, bC, bR, bV] = vals;
+  const topQ = [];
+  for (const qi of [q0, q1, q2]) {
+    const q = QUESTIONS[qi];
+    if (!q) return null;
+    topQ.push({ id: q.id, q, diff: 60, ache: 0 });
+  }
+  [b0, b1, b2].forEach((b, i) => { topQ[i].diff = b === 2 ? 60 : b === 1 ? 35 : 15; });
+  const share = {};
+  DIM_KEYS.forEach((k, i) => share[k] = [sT, sM, sC, sR, sV][i] / 100);
+  const dimA = {}, dimB = {};
+  DIM_KEYS.forEach((k, i) => dimA[k] = [aT, aM, aC, aR, aV][i]);
+  DIM_KEYS.forEach((k, i) => dimB[k] = [bT, bM, bC, bR, bV][i]);
+  if (!CRASH_TYPES[prim] || !CRASH_TYPES[sec]) return null;
+  return {
+    index,
+    primary: { type: CRASH_TYPES[prim] },
+    secondary: { type: CRASH_TYPES[sec] },
+    domK: DIM_KEYS[domKi] || 'T',
+    domLift: liftTier === 2 ? 0.75 : liftTier === 1 ? 0.45 : 0.15,
+    A: { dimScore: dimA }, B: { dimScore: dimB },
+    topQ, share, qGap: {}, vec: {}
+  };
+}
+
+function buildResultLink(R) {
+  const base = `${location.origin}${location.pathname}${location.search}`;
+  return `${base}#${RES_MAGIC}${encodeResult(R)}`;
 }
 
 /* ============================================================
@@ -1621,29 +1859,9 @@ function renderHome() {
   wrap.innerHTML = `
     <div class="home-glow"></div>
     <div class="home-inner">
-      <div class="kicker">FRIENDSHIP CRASH TEST · 双人版</div>
+      <div class="kicker">双人关系小测试</div>
       <h1 class="title">友谊<br><span class="accent">翻车预警</span></h1>
-      <p class="sub">你和这个朋友，终将因为什么绝交？<br>不是算命。是把你们俩的答案拼在一起，看裂缝长在哪。</p>
-
-      <div class="how">
-        <div class="how-step">
-          <div class="hn">01</div>
-          <div class="ht">你先答 14 题</div>
-          <div class="hd">按你自己的真实反应选，别替对方想。</div>
-        </div>
-        <div class="how-arrow">→</div>
-        <div class="how-step">
-          <div class="hn">02</div>
-          <div class="ht">生成专属链接</div>
-          <div class="hd">把链接发给那个朋友，不是发给别人。</div>
-        </div>
-        <div class="how-arrow">→</div>
-        <div class="how-step">
-          <div class="hn">03</div>
-          <div class="ht">他答完，结果自动拼合</div>
-          <div class="hd">两人都看不到对方原始答案，只看得到结论。</div>
-        </div>
-      </div>
+      <p class="sub">你们的关系最可能在哪儿出问题</p>
 
       <button class="btn btn-main" id="start">开始测试</button>
 
@@ -1655,10 +1873,7 @@ function renderHome() {
         <span class="foot-note">每条链接独立，可同时发给很多人</span>
       </div>
 
-      <div class="rules">
-        <div class="rule-tag">一次性机制</div>
-        <p>每个链接只能拼一次。生成结果后链接立即失效，不能反复换人测、也不能重答刷结果。这是它还算准的原因。</p>
-      </div>
+      <div class="home-note">结论仅供参考</div>
     </div>
   `;
   app.appendChild(wrap);
@@ -1717,7 +1932,7 @@ function renderQuiz() {
     </div>
     <div class="quiz-foot">
       <button class="btn-back" id="back">← ${state.cur === 0 ? (state._preview ? '退出预览' : '回首页') : '上一题'}</button>
-      <div class="hint">${state._preview ? '这是朋友会看到的界面' : (state.role === 'A' ? '答完后生成专属链接' : '答完立即出结果，链接随即失效')}</div>
+      <div class="hint">${state._preview ? '这是朋友会看到的界面' : (state.role === 'A' ? '答完生成链接' : '答完即出结果')}</div>
     </div>
   `;
   app.appendChild(wrap);
@@ -1889,23 +2104,18 @@ async function renderLinkPage() {
   const wrap = el('div', 'screen link');
   wrap.innerHTML = `
     <div class="link-inner">
-      <div class="kicker">STEP 2 / 3</div>
-      <h1 class="title sm">你的部分<br><span class="accent">已经封存</span></h1>
-      <p class="sub">下面这条链接里装着你的答案，但看不到内容。<br>把它发给那个朋友——只能发给他。他答完，我们才拼。</p>
+      <div class="kicker">你的部分已封存</div>
+      <h1 class="title sm">把链接发给<br><span class="accent">那个朋友</span></h1>
+      <p class="sub">他答完，结果才会拼出来。</p>
 
       <div class="linkbox">
-        <div class="lb-tag">专属配对链接 · 仅可使用一次</div>
+        <div class="lb-tag">专属链接</div>
         <div class="lb-url" id="url">${shown}</div>
         <div class="lb-actions">
           <button class="btn btn-main" id="copy">复制链接</button>
           <button class="btn btn-ghost" id="preview">先看看他会看到什么</button>
         </div>
         <div class="lb-note" id="copied"></div>
-      </div>
-
-      <div class="rules">
-        <div class="rule-tag">为什么是一次性</div>
-        <p>链接一旦被用来出结果，就会作废。这样你没法拿同一次作答去测好几个朋友、也没法反复重答挑一个好看的结论——结论才有意义。</p>
       </div>
 
       <button class="other-link" id="more">我要测别的朋友 →</button>
@@ -2049,60 +2259,23 @@ function renderDead() {
 }
 
 /* ---------- 结果页 ---------- */
-function renderResult(R, who) {
+function renderResult(R, who, opts) {
+  opts = opts || {};
   const app = $('#app');
   const lv = levelOf(R.index);
   const t = R.primary.type;
-  const t2 = R.secondary.type;
-
-  /* 维度条（按占比，最高的那条是主战场） */
-  const shareMax = Math.max(...DIM_KEYS.map(k => R.share[k]));
-  const dimRows = DIM_KEYS
-    .map(k => ({ k, v: R.share[k] }))
-    .sort((a, b) => b.v - a.v)
-    .map(({ k, v }, i) => {
-      const pct = Math.round((v / shareMax) * 100);
-      const hot = i === 0;
-      const sharePct = Math.round(v * 100);
-      return `
-        <div class="dim-row ${hot ? 'hot' : ''}">
-          <div class="dim-name">${DIMS[k].name}</div>
-          <div class="dim-track"><i style="width:${Math.max(5, pct)}%"></i></div>
-          <div class="dim-val">${sharePct}%</div>
-        </div>
-        <div class="dim-note ${hot ? 'on' : ''}">${dimNote(k, hot, R)}</div>`;
-    }).join('');
-
-  /* 每个维度的短评 */
-function dimNote(k, isTop, R) {
-  const s = R.share[k];
-  const lvl = isTop ? '主战场' : s > 0.22 ? '次战场' : s > 0.16 ? '偶尔咬人' : '基本安全';
-  const detail = {
-    T: ['联系频率上你们没对齐', '联系节奏基本合得上'],
-    M: ['亲密的尺度你们理解不同', '边界感比较一致'],
-    C: ['处理冲突的方式是反的', '冲突成本不高'],
-    R: ['接球的质量不对等', '供需大致平衡'],
-    V: ['某些立场上你们不是一路人', '价值底线比较接近']
-  }[k][isTop || s > 0.22 ? 0 : 1];
-  return `<span class="dn-lv">${lvl}</span>${detail}`;
-}
-
-/* 预言对白 */
-  const hotDim = { k: R.domK, v: R.domLift };
-  const prophecy = PROPHECY[hotDim.k][hotDim.v > 0.62 ? 'hi' : hotDim.v > 0.3 ? 'mid' : 'lo'];
-
-  const tiltTxt = R.tilt > 0
-    ? '你更容易先觉得"被辜负"。'
-    : R.tilt < 0
-      ? '他更容易先觉得"被辜负"。'
-      : '你们在这件事上出奇地对等，谁也不欠谁。';
+  const viewerDim = (opts.shared ? R.A : R.B).dimScore || {};
+  const soul = soulTypeOf(viewerDim);
+  const strengths = strengthsOf(viewerDim);
+  const gauge = gaugeHtml(R.index);
+  const radar = radarSvg(R, opts.shared);
 
   app.innerHTML = '';
   const wrap = el('div', 'screen result');
 
   wrap.innerHTML = `
     <div class="res-hero ${lv.cls}">
-      <div class="res-kicker">配对结论 · 一次性结果</div>
+      <div class="res-kicker">${opts.shared ? '对方发回的结论' : '配对结论'}</div>
       <div class="res-icon">${t.icon}</div>
       <div class="res-name">${t.name}</div>
       <div class="res-tag">${t.tag}</div>
@@ -2113,91 +2286,148 @@ function dimNote(k, isTop, R) {
           <div class="ri-lv">${lv.txt}</div>
         </div>
       </div>
-      <div class="ri-bar"><i style="width:${R.index}%"></i></div>
+      ${gauge}
     </div>
 
     <div class="res-body">
       <section class="card">
-        <div class="card-h"><span class="cn">01</span>结局预告</div>
+        <div class="card-h"><span class="cn">01</span>主要裂缝</div>
         <p class="lead">${t.lead}</p>
         <p class="killer">${t.killer}</p>
       </section>
 
       <section class="card">
         <div class="card-h"><span class="cn">02</span>裂缝分布</div>
-        <div class="dims">${dimRows}</div>
+        ${radar}
       </section>
 
       <section class="card">
-        <div class="card-h"><span class="cn">03</span>体感不太一样的三处</div>
-        <p class="card-sub">这里不谈谁对谁错。同一件事，你们感受到的重量本来就可能不同。</p>
-        <div class="gaps" id="gaps"></div>
-        <p class="feel-close" id="feelClose"></p>
-      </section>
-
-      <section class="card dark">
-        <div class="card-h"><span class="cn">04</span>那天大概会说出的一句话</div>
-        <div class="lines">
-          ${t.lines.map(l => `<div class="line">${l}</div>`).join('')}
+        <div class="card-h"><span class="cn">03</span>你的灵魂好友类型</div>
+        <div class="soul">
+          <div class="soul-avatar">${soul.name.charAt(0)}</div>
+          <div class="soul-main">
+            <div class="soul-name">${soul.name} · ${soul.tag}</div>
+            <div class="soul-line">${soul.line}</div>
+          </div>
         </div>
-        <div class="prophecy">${prophecy}</div>
       </section>
 
       <section class="card">
-        <div class="card-h"><span class="cn">05</span>抢救指南</div>
+        <div class="card-h"><span class="cn">04</span>你的交友优势</div>
+        <div class="strengths" id="strengths"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">05</span>需要关注</div>
+        <div class="gaps" id="gaps"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">06</span>如何维护这段关系</div>
         <p class="lead">${t.rescue}</p>
-        <p class="tilt">${tiltTxt}</p>
       </section>
 
-      <section class="card ghost">
-        <div class="card-h"><span class="cn">06</span>次生风险</div>
-        <p class="lead sm">如果主裂缝被修补，你们的第二道口子在 <b>${t2.name}</b>——${t2.tag}。它不会先发作，但会在关系变稳之后浮上来。</p>
-      </section>
-
-      <div class="final-note">
-        这不是命。翻车类型只说明你们的裂缝长在哪，不是说明你们一定会散。
-        <br>很多人是在看到这句话之后，才第一次把那句"没什么"说出口的。
-      </div>
+      <div class="final-note">结论仅供参考</div>
 
       <div class="res-actions">
-        <button class="btn btn-main" id="share">保存这张诊断卡</button>
+        <button class="btn btn-main" id="share">保存诊断卡</button>
+        ${opts.shared ? '' : '<button class="btn btn-ghost" id="sendback">把结论发给他</button>'}
         <button class="btn btn-ghost" id="restart">重新开始</button>
       </div>
-      <div class="dead-note">该链接已作废 · 无法重答或换人重测</div>
+      ${opts.shared ? '' : '<div class="dead-note">该链接已作废</div>'}
+      <div class="sendback-box" id="sendbackBox" style="display:none"></div>
     </div>
   `;
   app.appendChild(wrap);
 
-  /* 体感差异：只写"同一件事你们的感受不同"，不交代任何一方的具体选择 */
+  /* 需要关注：只写"这段关系要留意的地方"，不指认任何一方的选择 */
   const gapsBox = $('#gaps');
-  R.topQ.forEach(({ id, q, diff, ache }, i) => {
-    // 分档只看分歧度：分歧越大，越要给出"会咬人"的那一版
+  R.topQ.slice(0, 3).forEach(({ id, q, diff }, i) => {
     const band = diff >= 46 ? 'hi' : diff >= 26 ? 'mid' : 'lo';
-    const pool = FEEL[q.id];
-    const txt = pool[band] || pool.mid;
+    const pool = FEEL[q.id] || {};
+    const txt = pool[band] || pool.mid || '';
     const item = el('div', 'gap-item');
     item.innerHTML = `
       <div class="gap-idx">${String(i + 1).padStart(2, '0')}</div>
-      <div class="gap-body">
-        <div class="gap-scene">${q.scene}</div>
-        <div class="gap-d">${txt}</div>
-      </div>
+      <div class="gap-d">${txt}</div>
     `;
     gapsBox.appendChild(item);
   });
 
-  /* 收束句：如果三处都落在同一维度，加一句维度总结 */
-  const topDims = R.topQ.map(x => x.q.dim);
-  const sameDim = topDims.every(d => d === topDims[0]);
-  $('#feelClose').textContent = sameDim ? FEEL_DIM_CLOSE[topDims[0]] : '';
-  $('#feelClose').style.display = sameDim ? 'block' : 'none';
+  const stBox = $('#strengths');
+  strengths.forEach(s => {
+    const tierCls = s.tier === '强项' ? 't1' : s.tier === '平稳' ? 't2' : 't3';
+    const it = el('div', 'st-item');
+    it.innerHTML = `
+      <div class="st-head">
+        <span class="st-name">${s.name}</span>
+        <span class="st-tier ${tierCls}">${s.tier}</span>
+        <span class="st-score">+${s.score16}/16</span>
+      </div>
+      <div class="st-praise">${s.praise}</div>
+      <div class="st-tip">小建议：${s.tip}</div>
+    `;
+    stBox.appendChild(it);
+  });
+
   $('#share').onclick = () => {
     if (window.__pendingShot) return;
     toast('诊断卡已生成，长按或右键保存图片');
-    buildPoster(R, t, lv);
+    buildPoster(R, t, lv, soul);
   };
+  const sbBtn = $('#sendback');
+  if (sbBtn) {
+    sbBtn.onclick = async () => {
+      const rlink = buildResultLink(R);
+      try { await navigator.clipboard.writeText(rlink); } catch (e) { }
+      const box = $('#sendbackBox');
+      box.style.display = 'block';
+      box.innerHTML = `
+        <div class="sb-title">把下面这条链接发给对方，他就能看到结论（不含原始答案）</div>
+        <div class="lb-url" id="sbUrl">${shortenLink(rlink)}</div>
+        <button class="btn btn-main" id="sbCopy">复制链接</button>`;
+      $('#sbCopy').onclick = async () => {
+        try { await navigator.clipboard.writeText(rlink); } catch (e) { }
+        toast('已复制');
+      };
+      toast('结论链接已生成');
+    };
+  }
   $('#restart').onclick = () => { location.hash = ''; renderHome(); };
   window.scrollTo(0, 0);
+}
+
+function gaugeHtml(index) {
+  const segs = [0, 45, 58, 72, 85];
+  let active = -1;
+  segs.forEach((s, i) => { if (index >= s) active = i; });
+  const bars = [0, 1, 2, 3, 4].map(i => `<i class="${i <= active ? 'on' : ''}"></i>`).join('');
+  return `<div class="gauge">${bars}</div>`;
+}
+
+function radarSvg(R, viewerIsA) {
+  const keys = DIM_KEYS;
+  const cx = 150, cy = 150, r = 104;
+  const ang = i => -Math.PI / 2 + i * (2 * Math.PI / keys.length);
+  const pt = (i, v) => {
+    const a = ang(i), rr = Math.max(0, Math.min(1, (v || 0) / 100)) * r;
+    return [cx + Math.cos(a) * rr, cy + Math.sin(a) * rr];
+  };
+  const polyPts = (dim) => keys.map((k, i) => pt(i, dim ? dim[k] : 0).map(n => n.toFixed(1)).join(',')).join(' ');
+  const rings = [25, 50, 75, 100].map(v =>
+    `<polygon points="${keys.map((k, i) => pt(i, v).map(n => n.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="rgba(242,231,213,.12)"/>`
+  ).join('');
+  const axes = keys.map((k, i) => {
+    const [x, y] = pt(i, 100);
+    return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(242,231,213,.12)"/>`;
+  }).join('');
+  const labels = keys.map((k, i) => {
+    const [x, y] = pt(i, 124);
+    return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" class="radar-label">${DIMS[k].short}</text>`;
+  }).join('');
+  const svg = `<svg class="radar" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">${rings}${axes}<polygon points="${polyPts(R.A && R.A.dimScore)}" class="radar-a"/><polygon points="${polyPts(R.B && R.B.dimScore)}" class="radar-b"/>${labels}</svg>`;
+  const legend = `<div class="radar-legend"><span class="rdot a"></span>${viewerIsA ? '你' : '对方'}<span class="rdot b"></span>${viewerIsA ? '对方' : '你'}</div>`;
+  return `${svg}${legend}`;
 }
 
 function toast(msg) {
@@ -2208,7 +2438,7 @@ function toast(msg) {
 }
 
 /* ---------- 诊断卡（Canvas 生成图片） ---------- */
-function buildPoster(R, t, lv) {
+function buildPoster(R, t, lv, soul) {
   window.__pendingShot = true;
   const W = 1080, H = 1440;
   const c = document.createElement('canvas');
@@ -2239,7 +2469,7 @@ function buildPoster(R, t, lv) {
   // 顶部标签
   g.fillStyle = 'rgba(240,225,200,0.55)';
   g.font = `500 26px ${F}`;
-  g.fillText('FRIENDSHIP CRASH TEST · 双人配对结论', 96, 108);
+  g.fillText('双人关系测试 · 配对结论', 96, 108);
 
   // 图标
   g.font = `80px ${F}`;
@@ -2284,29 +2514,65 @@ function buildPoster(R, t, lv) {
   // 主导台词
   g.fillStyle = '#f2e7d5';
   g.font = `600 46px ${F}`;
-  wrapText(g, t.killer, 100, 902, W - 200, 68, 3);
+  wrapText(g, t.killer, 100, 822, W - 200, 66, 2);
 
-  // 高危台词
-  let ly = 1100;
-  g.fillStyle = 'rgba(240,225,200,0.62)';
-  g.font = `400 34px ${F}`;
-  t.lines.slice(0, 3).forEach(l => {
-    g.fillText(l, 100, ly);
-    ly += 56;
+  // 雷达图
+  const keys = DIM_KEYS;
+  const rcx = 540, rcy = 1065, rr = 120;
+  const rang = i => -Math.PI / 2 + i * (2 * Math.PI / keys.length);
+  const rpt = (i, v) => {
+    const a = rang(i), rad = Math.max(0, Math.min(1, (v || 0) / 100)) * rr;
+    return [rcx + Math.cos(a) * rad, rcy + Math.sin(a) * rad];
+  };
+  g.strokeStyle = 'rgba(240,225,200,0.16)'; g.lineWidth = 2;
+  [25, 50, 75, 100].forEach(v => {
+    g.beginPath();
+    keys.forEach((k, i) => { const [x, y] = rpt(i, v); i === 0 ? g.moveTo(x, y) : g.lineTo(x, y); });
+    g.closePath(); g.stroke();
   });
+  const rpoly = (dim, color) => {
+    g.beginPath();
+    keys.forEach((k, i) => { const [x, y] = rpt(i, dim ? dim[k] : 0); i === 0 ? g.moveTo(x, y) : g.lineTo(x, y); });
+    g.closePath();
+    g.globalAlpha = .14; g.fillStyle = color; g.fill(); g.globalAlpha = 1;
+    g.strokeStyle = color; g.lineWidth = 4; g.stroke();
+  };
+  if (R.A) rpoly(R.A.dimScore, '#e6563a');
+  if (R.B) rpoly(R.B.dimScore, '#f2e7d5');
+  g.fillStyle = 'rgba(240,225,200,0.7)'; g.font = `500 28px ${F}`;
+  keys.forEach((k, i) => {
+    const [x, y] = rpt(i, 92);
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(DIMS[k].short, x, y);
+  });
+  g.textAlign = 'left'; g.textBaseline = 'top';
+
+  // 灵魂好友
+  if (soul) {
+    g.strokeStyle = 'rgba(240,225,200,0.3)'; g.lineWidth = 2;
+    g.beginPath(); g.arc(136, 1225, 40, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#f2e7d5'; g.font = `600 40px ${F}`;
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(soul.name.charAt(0), 136, 1226);
+    g.textAlign = 'left'; g.textBaseline = 'top';
+    g.fillStyle = '#f2e7d5'; g.font = `600 40px ${F}`;
+    g.fillText(`${soul.name} · ${soul.tag}`, 220, 1194);
+    g.fillStyle = 'rgba(240,225,200,0.62)'; g.font = `400 28px ${F}`;
+    wrapText(g, soul.line, 220, 1246, W - 220 - 96, 42, 1);
+  }
 
   // 底部
   g.strokeStyle = 'rgba(240,225,200,0.16)';
-  g.beginPath(); g.moveTo(96, 1300); g.lineTo(W - 96, 1300); g.stroke();
+  g.beginPath(); g.moveTo(96, 1310); g.lineTo(W - 96, 1310); g.stroke();
 
   g.fillStyle = 'rgba(240,225,200,0.42)';
   g.font = `400 26px ${F}`;
-  g.fillText('两个人各答一次，答案拼合后才出这个结论。', 100, 1336);
+  g.fillText('结论仅供参考', 100, 1338);
 
   g.fillStyle = '#e6563a';
   g.font = `600 28px ${F}`;
   g.textAlign = 'right';
-  g.fillText('友谊翻车预警', W - 100, 1332);
+  g.fillText('友谊翻车预警', W - 100, 1336);
   g.textAlign = 'left';
 
   // 输出
@@ -2364,6 +2630,10 @@ function boot() {
         : p.reason === 'sig'
           ? '这条链接的校验位对不上，内容被改动过。'
           : '链接里的答案无法识别，可能被改动了。');
+      return;
+    }
+    if (p && p.mode === 'result') {
+      renderResult(p.data, 'B', { shared: true });
       return;
     }
     if (p && p.mode === 'join') {
@@ -2433,11 +2703,7 @@ function renderInvite(code, serverId) {
       <div class="inv-inner">
         <div class="inv-badge">有人把这条链接发给了你</div>
         <h1 class="title sm">他先答完了<br><span class="accent">轮到你了</span></h1>
-        <p class="sub">这一步之后，你们两个人的答案会被拼在一起，<br>算出你们最终会因为什么翻车。<br><b>你看不到他选了什么，他也看不到你的。</b></p>
-        <div class="rules warn">
-          <div class="rule-tag">只有一次机会</div>
-          <p>你答完的瞬间就会出结果，这条链接同时作废。中途关掉页面也需要重新拿一条新链接——所以找个安静的地方答完它。</p>
-        </div>
+        <p class="sub">答完立刻出结果，互相看不到对方的答案。</p>
         <button class="btn btn-main" id="go">我开始答</button>
         <div class="inv-loading" id="invLoad"></div>
       </div>
