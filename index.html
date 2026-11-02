@@ -1517,6 +1517,11 @@ const Backend = {
     });
   },
 
+  /* A 查看结论（生成者本人） */
+  async result(id, ownerKey) {
+    return this._fetch('/api/link/' + encodeURIComponent(id) + '/result?owner=' + encodeURIComponent(ownerKey));
+  },
+
   /* 我的链接 */
   async mine(ownerKey) {
     return this._fetch('/api/mine?owner=' + encodeURIComponent(ownerKey));
@@ -1529,6 +1534,8 @@ const BACKEND_MSG = {
   already_locked: '这条链接正在被作答，请稍后再试。',
   already_spent: '这条链接已经出过结果了，不能重复使用。',
   already_revoked: '这条链接已被停用。',
+  not_ready: '对方还没答完，再等等。',
+  no_owner: '这条链接不属于当前设备。',
   quota_exhausted: '这个订单的链接额度已用完，需要再购买。',
   order_not_found: '订单不存在或未支付成功。',
   too_many: '操作太频繁，请等一分钟再试。',
@@ -2031,7 +2038,8 @@ async function finishServer() {
   const r = await Backend.submit(state.serverId, {
     bCode,
     resultType: local.primary.type.id,
-    resultIdx: local.index
+    resultIdx: local.index,
+    resultCode: encodeResult(local)
   });
 
   if (!r.ok) {
@@ -2168,29 +2176,49 @@ function shortenLink(full) {
 }
 
 /* ---------- 我的链接（管理面板） ---------- */
-function renderManage() {
+async function renderManage() {
   const app = $('#app');
   const links = myLinks();
-  const usedN = links.filter(x => x.used).length;
+
+  // 后端模式：向服务端同步每条链接的最新状态（A 不依赖 B 回传也能知道有没有出结果）
+  let statusById = null;
+  if (Backend.enabled()) {
+    const mine = await Backend.mine(myId());
+    if (mine.ok && Array.isArray(mine.data.links)) {
+      statusById = {};
+      mine.data.links.forEach(l => { statusById[l.id] = l.status; });
+    }
+  }
+
+  const statOf = x => (statusById && statusById[x.key]) || (x.used ? 'spent' : 'pending');
+  const done = x => statOf(x) === 'spent' || statOf(x) === 'revoked';
+  const busy = x => statOf(x) === 'locked';
+  const usedN = links.filter(done).length;
   const openN = links.length - usedN;
 
   const rows = links.length ? links.map((x, i) => {
     const d = new Date(x.at);
     const time = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-    const isOpen = !x.used;
+    const isOpen = !done(x);
+    const statusText = busy(x) ? '<span class="dot"></span>对方正在作答'
+      : isOpen ? '<span class="dot"></span>等待对方作答'
+      : '已完成 · 已出结果';
+    const viewBtn = (!isOpen && Backend.enabled())
+      ? `<button class="mg-btn view" data-id="${x.key}">查看结果</button>`
+      : '';
     return `
       <div class="mg-row ${isOpen ? 'open' : 'used'}">
         <div class="mg-main">
           <div class="mg-idx">#${String(links.length - i).padStart(2, '0')}</div>
           <div class="mg-info">
             <div class="mg-time">${time}</div>
-            <div class="mg-status">${isOpen ? '<span class="dot"></span>等待对方作答' : '已完成 · 已作废'}</div>
+            <div class="mg-status">${statusText}</div>
           </div>
         </div>
         <div class="mg-actions">
           ${isOpen
         ? `<button class="mg-btn copy" data-url="${x.url.replace(/"/g, '&quot;')}">复制</button>`
-        : `<button class="mg-btn copy" data-url="${x.url.replace(/"/g, '&quot;')}">查看链接</button>`}
+        : `${viewBtn}<button class="mg-btn copy" data-url="${x.url.replace(/"/g, '&quot;')}">复制链接</button>`}
         </div>
       </div>`;
   }).join('') : `<div class="mg-empty">还没有生成过链接。<br>回到首页答一遍，就会有一条。</div>`;
@@ -2234,6 +2262,16 @@ function renderManage() {
       const u = b.dataset.url;
       try { await navigator.clipboard.writeText(u); } catch (e) { }
       toast('链接已复制');
+    };
+  });
+  $$('.mg-btn.view').forEach(b => {
+    b.onclick = async () => {
+      const id = b.dataset.id;
+      const r = await Backend.result(id, myId());
+      if (!r.ok) { toast(backendMsg(r.data.error)); return; }
+      const data = r.data.resultCode ? decodeResult(r.data.resultCode) : null;
+      if (!data) { renderBad('结论读取失败，请让朋友重新发一条链接。'); return; }
+      renderResult(data, 'B', { shared: true });
     };
   });
 }
