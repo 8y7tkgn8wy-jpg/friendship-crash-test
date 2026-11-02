@@ -111,6 +111,37 @@ body::before {
 }
 .btn-ghost:hover { color: var(--ink); border-color: rgba(242, 231, 213, .34); }
 
+/* 测试码 & 管理页 */
+.start-gate { margin-bottom: 16px; }
+.code-input {
+  width: 100%; max-width: 320px;
+  padding: 15px 16px;
+  font-size: 15px; font-family: var(--sans);
+  color: var(--ink);
+  background: rgba(0, 0, 0, .25);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  outline: none;
+  letter-spacing: .04em;
+  text-align: center;
+}
+.code-input:focus { border-color: var(--hot); }
+.admin-inner {
+  width: 100%; max-width: 380px;
+  padding-top: 9vh;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.admin-form { width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.admin-out { width: 100%; margin-top: 22px; font-size: 14px; color: var(--ink-dim); line-height: 1.8; }
+.admin-code {
+  font-family: ui-monospace, monospace; font-size: 20px; color: var(--hot2);
+  letter-spacing: .06em; word-break: break-all;
+  padding: 14px 16px; background: rgba(0, 0, 0, .3);
+  border: 1px solid var(--line); border-radius: 2px;
+}
+.admin-meta { font-size: 12.5px; color: var(--ink-faint); margin: 10px 0 12px; }
+.admin-inner .btn-back { margin-top: 28px; }
+
 .rules {
   margin-top: 40px; padding: 20px 22px;
   border-left: 2px solid rgba(230, 86, 58, .5);
@@ -1582,6 +1613,20 @@ const Backend = {
   /* 我的链接 */
   async mine(ownerKey) {
     return this._fetch('/api/mine?owner=' + encodeURIComponent(ownerKey));
+  },
+
+  /* 校验测试码 */
+  async order(id) {
+    return this._fetch('/api/order/' + encodeURIComponent(id));
+  },
+
+  /* 管理：生成测试码（需管理密码） */
+  async adminOrder(token, quota) {
+    return this._fetch('/api/admin/order', {
+      method: 'POST',
+      headers: { 'X-Admin-Token': token },
+      body: JSON.stringify({ plan: 'manual', quota })
+    });
   }
 };
 
@@ -1593,8 +1638,8 @@ const BACKEND_MSG = {
   already_revoked: '这条链接已被停用。',
   not_ready: '对方还没答完，再等等。',
   no_owner: '这条链接不属于当前设备。',
-  quota_exhausted: '这个订单的链接额度已用完，需要再购买。',
-  order_not_found: '订单不存在或未支付成功。',
+  order_not_found: '测试码不存在，找管理员核对一下。',
+  quota_exhausted: '这个测试码已经用完了，找管理员要新的。',
   too_many: '操作太频繁，请等一分钟再试。',
   network: '网络不太顺，请检查连接后重试。',
   bad_code: '答案数据格式不对。',
@@ -1927,6 +1972,9 @@ function renderHome() {
       <h1 class="title">友谊<br><span class="accent">翻车预警</span></h1>
       <p class="sub">你们的关系最可能在哪儿出问题</p>
 
+      <div class="start-gate">
+        <input class="code-input" id="code" placeholder="输入测试码" maxlength="32" autocomplete="off">
+      </div>
       <button class="btn btn-main" id="start">开始测试</button>
 
       <div class="home-foot">
@@ -1934,21 +1982,76 @@ function renderHome() {
           我的链接<span class="foot-badge" id="openCount"></span>
         </button>
         <span class="foot-sep">·</span>
-        <span class="foot-note">每条链接独立，可同时发给很多人</span>
+        <button class="foot-link" id="admin">管理</button>
       </div>
 
       <div class="home-note">结论仅供参考</div>
     </div>
   `;
   app.appendChild(wrap);
-  $('#start').onclick = () => startA();
+  $('#start').onclick = async () => {
+    const code = ($('#code').value || '').trim();
+    if (!Backend.enabled()) { startA(); return; }
+    if (!code) { toast('请输入管理员给你的测试码'); return; }
+    const r = await Backend.order(code);
+    if (!r.ok) { toast(backendMsg(r.data.error)); return; }
+    if (!(r.data.remaining > 0)) { toast(backendMsg('quota_exhausted')); return; }
+    localStorage.setItem('crash_order', code);
+    startA();
+  };
   $('#manage').onclick = () => renderManage();
+  $('#admin').onclick = () => { location.hash = '#admin'; renderAdmin(); };
 
   const openN = myLinks().filter(x => !x.used).length;
   if (openN > 0) {
     $('#openCount').textContent = openN;
     $('#openCount').style.display = 'inline-block';
   }
+}
+
+/* ---------- 管理页：生成测试码 ---------- */
+function renderAdmin() {
+  const app = $('#app');
+  app.innerHTML = '';
+  const wrap = el('div', 'screen admin');
+  wrap.innerHTML = `
+    <div class="admin-inner">
+      <div class="kicker">管理入口</div>
+      <h1 class="title sm">生成<br><span class="accent">测试码</span></h1>
+      <p class="sub">一个测试码只能开始对应次数的双人测试，用完即废。</p>
+
+      <div class="admin-form">
+        <input class="code-input" id="admPwd" type="password" placeholder="管理密码" autocomplete="off">
+        <input class="code-input" id="admQuota" type="number" min="1" max="999" value="1" placeholder="可用次数">
+        <button class="btn btn-main" id="admGen">生成测试码</button>
+      </div>
+      <div class="admin-out" id="admOut"></div>
+      <button class="btn-back" id="admBack">← 返回首页</button>
+    </div>
+  `;
+  app.appendChild(wrap);
+
+  $('#admBack').onclick = () => { location.hash = ''; renderHome(); };
+  $('#admGen').onclick = async () => {
+    const token = ($('#admPwd').value || '').trim();
+    const quota = Math.min(999, Math.max(1, parseInt($('#admQuota').value || '1', 10) || 1));
+    const out = $('#admOut');
+    if (!token) { out.textContent = '请输入管理密码'; return; }
+    out.textContent = '生成中…';
+    const r = await Backend.adminOrder(token, quota);
+    if (!r.ok) {
+      out.textContent = r.data.error === 'unauthorized' ? '密码不对' : backendMsg(r.data.error);
+      return;
+    }
+    const code = r.data.id;
+    out.innerHTML = `
+      <div class="admin-code">${code}</div>
+      <div class="admin-meta">可用 ${quota} 次 · 发给测试者，让对方在首页输入</div>
+      <button class="btn btn-ghost" id="admCopy">复制测试码</button>`;
+    $('#admCopy').onclick = async () => {
+      try { await navigator.clipboard.writeText(code); toast('已复制'); } catch (e) { }
+    };
+  };
 }
 
 /* ---------- 答题 ---------- */
@@ -2746,6 +2849,7 @@ function wrapText(g, text, x, y, maxW, lh, maxLines) {
    ============================================================ */
 function boot() {
   try {
+    if (location.hash.replace(/^#/, '') === 'admin') { renderAdmin(); return; }
     const p = parseHash();
     if (p && p.mode === 'bad') {
       renderBad(p.reason === 'len'
