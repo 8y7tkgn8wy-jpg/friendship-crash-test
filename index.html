@@ -478,6 +478,11 @@ body::before {
 }
 .dgap-item.hi .dgap-pct { color: var(--hot2); font-weight: 700; }
 .dgap-txt { font-size: 13.5px; line-height: 1.85; color: var(--ink-dim); }
+.dgap-ref {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 12.5px; line-height: 1.75; color: var(--ink-faint);
+}
+.dgap-ref .theory-ref { flex: 0 0 auto; }
 
 .feel-close {
   margin: 26px 0 0;
@@ -517,20 +522,11 @@ body::before {
 .theory-intro {
   font-size: 14px; line-height: 1.85; color: var(--ink-dim); margin: 0 0 20px;
 }
-.theory-list { display: flex; flex-direction: column; }
-.theory-item {
-  display: flex; flex-direction: column; gap: 7px;
-  padding: 14px 0; border-bottom: 1px solid rgba(242,231,213,.07);
-}
-.theory-item:last-child { border-bottom: none; padding-bottom: 0; }
-.theory-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.theory-dim { font-size: 14.5px; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
 .theory-ref {
   font-size: 11px; color: var(--hot2); letter-spacing: .06em;
   padding: 2px 9px; border: 1px solid rgba(230,86,58,.32); border-radius: 999px;
   white-space: nowrap;
 }
-.theory-line { font-size: 13.5px; line-height: 1.85; color: var(--ink-dim); }
 .theory-method {
   margin: 20px 0 0; padding: 14px 16px;
   font-size: 13px; line-height: 1.85; color: var(--ink-dim);
@@ -2191,6 +2187,8 @@ async function renderLinkPage() {
         <div class="lb-note" id="copied"></div>
       </div>
 
+      ${Backend.enabled() ? `<button class="btn btn-ghost" id="checkResult" style="width:100%;margin-top:10px">他答完了？点这里查看结果</button>` : ''}
+
       <button class="other-link" id="more">我要测别的朋友 →</button>
     </div>
   `;
@@ -2214,6 +2212,21 @@ async function renderLinkPage() {
     state._preview = true;
     renderQuiz();
   };
+
+  const checkBtn = $('#checkResult');
+  if (checkBtn) {
+    checkBtn.onclick = async () => {
+      const r = await Backend.result(serverId, myId());
+      if (!r.ok) {
+        if (r.data.error === 'not_ready') { toast('对方还没答完，再等等'); return; }
+        toast(backendMsg(r.data.error));
+        return;
+      }
+      const data = r.data.resultCode ? decodeResult(r.data.resultCode) : null;
+      if (!data) { renderBad('结论读取失败，请让朋友重新发一条链接。'); return; }
+      renderResult(data, 'B', { shared: true });
+    };
+  }
 
   $('#more').onclick = () => {
     state._preview = false;
@@ -2409,16 +2422,20 @@ function renderResult(R, who, opts) {
         <div class="card-h"><span class="cn">02</span>裂缝分布</div>
         ${radar}
         ${sec ? `<p class="card-sub">次裂缝：${sec.name} · ${sec.tag}</p>` : ''}
+        <p class="theory-intro">${THEORY.intro}</p>
         <div class="dgap-list">
           ${DIM_KEYS.map(k => {
             const pct = Math.round((R.share[k] || 0) * 100);
             const band = pct >= 30 ? 'hi' : pct >= 18 ? 'mid' : 'lo';
+            const th = THEORY.dims.find(d => d.k === k) || {};
             return `<div class="dgap-item ${band}">
               <div class="dgap-top"><span class="dgap-name">${DIMS[k].name}</span><span class="dgap-pct">${pct}%</span></div>
               <div class="dgap-txt">${DIM_GAPS[k][band]}</div>
+              <div class="dgap-ref"><span class="theory-ref">${th.ref}</span>${th.refLine}</div>
             </div>`;
           }).join('')}
         </div>
+        <p class="theory-method">${THEORY.method}</p>
       </section>
 
       <section class="card">
@@ -2445,22 +2462,6 @@ function renderResult(R, who, opts) {
       <section class="card">
         <div class="card-h"><span class="cn">06</span>如何维护这段关系</div>
         <p class="lead">${t.rescue}</p>
-      </section>
-
-      <section class="card">
-        <div class="card-h"><span class="cn">07</span>理论注脚</div>
-        <p class="theory-intro">${THEORY.intro}</p>
-        <div class="theory-list">
-          ${THEORY.dims.map(d => `
-            <div class="theory-item">
-              <div class="theory-head">
-                <span class="theory-dim">${d.name}</span>
-                <span class="theory-ref">${d.ref}</span>
-              </div>
-              <div class="theory-line">${d.refLine}</div>
-            </div>`).join('')}
-        </div>
-        <p class="theory-method">${THEORY.method}</p>
       </section>
 
       <div class="final-note">结论仅供参考</div>
