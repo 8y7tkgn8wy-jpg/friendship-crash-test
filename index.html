@@ -519,9 +519,6 @@ body::before {
 .card.ghost { opacity: .82; }
 
 /* 理论注脚 */
-.theory-intro {
-  font-size: 14px; line-height: 1.85; color: var(--ink-dim); margin: 0 0 20px;
-}
 .theory-ref {
   font-size: 11px; color: var(--hot2); letter-spacing: .06em;
   padding: 2px 9px; border: 1px solid rgba(230,86,58,.32); border-radius: 999px;
@@ -1357,7 +1354,6 @@ const STRENGTHS = [
    原则：只做诚实参照，不伪装成临床量表、不虚构数据
    ============================================================ */
 const THEORY = {
-  intro: '十四道题背后，是五条在人际与亲密关系研究里反复出现的线索。把它们翻译成日常场景，就是这份结论的由来。',
   dims: [
     { k: 'T', name: '时间温差', ref: '自我表露', refLine: '关系靠持续的表露维持；停止交流的那段空白，就是亲密感开始蒸发的地方。' },
     { k: 'M', name: '边界态度', ref: '边界理论', refLine: '健康的亲密不是不设防，而是边界清楚、又能随时打开一扇门。' },
@@ -2104,9 +2100,10 @@ async function finishServer() {
   });
 
   if (!r.ok) {
-    if (r.data.error === 'already_spent') return renderDead();
+    if (r.data.error === 'already_spent') { markUsed('t:' + state.serverId); return renderDead(); }
     if (r.offline) {
       // 断网：仍给用户看结果，但提示未成功登记
+      markUsed('t:' + state.serverId);
       state.result = local;
       renderResult(local, 'B');
       toast('网络不稳，结果已生成但可能未登记');
@@ -2115,6 +2112,7 @@ async function finishServer() {
     return renderBad(backendMsg(r.data.error));
   }
 
+  markUsed('t:' + state.serverId);
   try { history.replaceState(null, '', buildLink(null, 'spent', state.serverId)); } catch (e) { }
   state.result = local;
   renderResult(local, 'B');
@@ -2422,7 +2420,6 @@ function renderResult(R, who, opts) {
         <div class="card-h"><span class="cn">02</span>裂缝分布</div>
         ${radar}
         ${sec ? `<p class="card-sub">次裂缝：${sec.name} · ${sec.tag}</p>` : ''}
-        <p class="theory-intro">${THEORY.intro}</p>
         <div class="dgap-list">
           ${DIM_KEYS.map(k => {
             const pct = Math.round((R.share[k] || 0) * 100);
@@ -2801,6 +2798,9 @@ async function bootServerLink(id) {
       <div class="dead-icon">⏳</div>
       <div class="sub" style="text-align:center">正在确认链接状态…</div>
     </div></div>`;
+
+  // 本机兜底：这条链接本机已经出过结果，直接作废（不依赖服务器也能挡刷新）
+  if (isUsed('t:' + id)) return renderDead();
 
   const r = await Backend.getState(id);
   if (!r.ok) {
