@@ -463,6 +463,22 @@ body::before {
   letter-spacing: .01em;
 }
 
+/* 五维逐条解读 */
+.dgap-list { display: flex; flex-direction: column; margin-top: 20px; }
+.dgap-item {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 13px 0; border-bottom: 1px solid rgba(242,231,213,.07);
+}
+.dgap-item:last-child { border-bottom: none; padding-bottom: 0; }
+.dgap-top { display: flex; align-items: baseline; gap: 10px; }
+.dgap-name { font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
+.dgap-pct {
+  font-size: 12px; font-family: ui-monospace, monospace;
+  color: var(--ink-faint); font-variant-numeric: tabular-nums;
+}
+.dgap-item.hi .dgap-pct { color: var(--hot2); font-weight: 700; }
+.dgap-txt { font-size: 13.5px; line-height: 1.85; color: var(--ink-dim); }
+
 .feel-close {
   margin: 26px 0 0;
   padding: 16px 18px;
@@ -1235,6 +1251,15 @@ const GAPTEXT = {
     b: '他在钱、立场、人生选择上的尺度更硬。你可能觉得他不近人情。',
     near: '你们的价值底线比较接近，这一项能兜住不少事。'
   }
+};
+
+/* 五维逐条解读：按该维度在裂缝中的占比分档（中性表达，不指认任何一方） */
+const DIM_GAPS = {
+  T: { hi: '联系频率是这段关系的薄弱点：沉默容易先被读成疏远。', mid: '联系频率偶有错拍，但不至于伤感情。', lo: '联系频率接近，不太会因"久不联系"起误会。' },
+  M: { hi: '边界的松紧差得比较明显，越界容易被当成冒犯。', mid: '边界感略有出入，多数时候能互相迁就。', lo: '边界感接近，不会因为"太过了"而别扭。' },
+  C: { hi: '冲突时的节奏明显不同：一个想当面讲清，一个想先离开。', mid: '吵架方式不完全同步，但不一定伤人。', lo: '吵架方式接近，冲突未必是裂缝。' },
+  R: { hi: '对回应的需求差得多，一方容易反复落空。', mid: '回应需求略有差别，时间点可能对不上。', lo: '回应需求接近，供需基本平衡。' },
+  V: { hi: '价值底线差得明显，钱、立场、人生选择上容易起争执。', mid: '价值尺度略有不同，大事上需留意。', lo: '价值底线接近，这一项能兜住不少事。' }
 };
 
 /* ============================================================
@@ -2342,6 +2367,7 @@ function renderResult(R, who, opts) {
   const app = $('#app');
   const lv = levelOf(R.index);
   const t = R.primary.type;
+  const sec = (R.secondary && R.secondary.type) || null;
   const viewerDim = (opts.shared ? R.A : R.B).dimScore || {};
   const soul = soulTypeOf(viewerDim);
   const strengths = strengthsOf(viewerDim);
@@ -2372,11 +2398,27 @@ function renderResult(R, who, opts) {
         <div class="card-h"><span class="cn">01</span>主要裂缝</div>
         <p class="lead">${t.lead}</p>
         <p class="killer">${t.killer}</p>
+        ${t.lines && t.lines.length ? `
+          <div class="card-sub">你们可能会听见的话</div>
+          <div class="lines">
+            ${t.lines.map(l => `<div class="line">${l}</div>`).join('')}
+          </div>` : ''}
       </section>
 
       <section class="card">
         <div class="card-h"><span class="cn">02</span>裂缝分布</div>
         ${radar}
+        ${sec ? `<p class="card-sub">次裂缝：${sec.name} · ${sec.tag}</p>` : ''}
+        <div class="dgap-list">
+          ${DIM_KEYS.map(k => {
+            const pct = Math.round((R.share[k] || 0) * 100);
+            const band = pct >= 30 ? 'hi' : pct >= 18 ? 'mid' : 'lo';
+            return `<div class="dgap-item ${band}">
+              <div class="dgap-top"><span class="dgap-name">${DIMS[k].name}</span><span class="dgap-pct">${pct}%</span></div>
+              <div class="dgap-txt">${DIM_GAPS[k][band]}</div>
+            </div>`;
+          }).join('')}
+        </div>
       </section>
 
       <section class="card">
