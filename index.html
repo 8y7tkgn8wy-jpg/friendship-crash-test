@@ -2100,10 +2100,9 @@ async function finishServer() {
   });
 
   if (!r.ok) {
-    if (r.data.error === 'already_spent') { markUsed('t:' + state.serverId); return renderDead(); }
+    if (r.data.error === 'already_spent') return renderDead();
     if (r.offline) {
       // 断网：仍给用户看结果，但提示未成功登记
-      markUsed('t:' + state.serverId);
       state.result = local;
       renderResult(local, 'B');
       toast('网络不稳，结果已生成但可能未登记');
@@ -2112,7 +2111,6 @@ async function finishServer() {
     return renderBad(backendMsg(r.data.error));
   }
 
-  markUsed('t:' + state.serverId);
   try { history.replaceState(null, '', buildLink(null, 'spent', state.serverId)); } catch (e) { }
   state.result = local;
   renderResult(local, 'B');
@@ -2187,7 +2185,6 @@ async function renderLinkPage() {
 
       ${Backend.enabled() ? `<button class="btn btn-ghost" id="checkResult" style="width:100%;margin-top:10px">他答完了？点这里查看结果</button>` : ''}
 
-      <button class="other-link" id="more">我要测别的朋友 →</button>
     </div>
   `;
   app.appendChild(wrap);
@@ -2226,12 +2223,6 @@ async function renderLinkPage() {
     };
   }
 
-  $('#more').onclick = () => {
-    state._preview = false;
-    state.role = null;
-    renderHome();
-    toast('重新答一遍，会生成一条新的链接');
-  };
 }
 
 /* 展示用的短链：去掉 file:// 之类的冗长前缀，只留关键部分 */
@@ -2321,12 +2312,10 @@ async function renderManage() {
           你可以同时发给很多朋友，谁先答完谁先出结果。
         </div>
 
-        <button class="btn btn-main" id="newone" style="width:100%;margin-top:8px">我再生成一条</button>
       </div>
     </div>
   `;
   $('#back').onclick = () => { location.hash = ''; renderHome(); };
-  $('#newone').onclick = () => { location.hash = ''; startA(); };
   $('#clear').onclick = () => {
     if (confirm('清空后，这些链接的记录会消失（但对方手里的链接仍然有效）。确定吗？')) {
       writeJSON(LK_LINKS, []);
@@ -2362,10 +2351,10 @@ function renderDead() {
         <h1 class="title sm">这条链接<br><span class="accent">已经用过了</span></h1>
         <p class="sub">每个配对链接只能拼一次结果。<br>它要么已经出过结论，要么被打开过又关掉了。</p>
         <div class="rules">
-          <div class="rule-tag">想再测一次？</div>
-          <p>回到首页重新开始，生成一条新的链接。换一个人测、或者和朋友重新各答一遍，都可以——但那会是一份新的答案。</p>
+          <div class="rule-tag">还想再测？</div>
+          <p>找发给你链接的人，再要一条新的。旧的这条已经不能用了。</p>
         </div>
-        <button class="btn btn-main" id="again">重新开始</button>
+        <button class="btn btn-main" id="again">回到首页</button>
       </div>
     </div>
   `;
@@ -2466,7 +2455,6 @@ function renderResult(R, who, opts) {
       <div class="res-actions">
         <button class="btn btn-main" id="share">保存诊断卡</button>
         ${opts.shared ? '' : '<button class="btn btn-ghost" id="sendback">把结论发给他</button>'}
-        <button class="btn btn-ghost" id="restart">重新开始</button>
       </div>
       ${opts.shared ? '' : '<div class="dead-note">该链接已作废</div>'}
       <div class="sendback-box" id="sendbackBox" style="display:none"></div>
@@ -2527,7 +2515,6 @@ function renderResult(R, who, opts) {
       toast('结论链接已生成');
     };
   }
-  $('#restart').onclick = () => { location.hash = ''; renderHome(); };
   window.scrollTo(0, 0);
 }
 
@@ -2799,16 +2786,21 @@ async function bootServerLink(id) {
       <div class="sub" style="text-align:center">正在确认链接状态…</div>
     </div></div>`;
 
-  // 本机兜底：这条链接本机已经出过结果，直接作废（不依赖服务器也能挡刷新）
-  if (isUsed('t:' + id)) return renderDead();
-
   const r = await Backend.getState(id);
   if (!r.ok) {
     if (r.offline) return renderBad('连不上服务器，请检查网络后重试。');
     return renderBad(backendMsg(r.data.error));
   }
   const st = r.data.status;
-  if (st === 'spent') return renderDead();
+  if (st === 'spent') {
+    // 已用：先判断打开者是不是这条链接的主人（A），是就直接给结论
+    const rr = await Backend.result(id, myId());
+    if (rr.ok && rr.data.resultCode) {
+      const data = decodeResult(rr.data.resultCode);
+      if (data) { renderResult(data, 'B', { shared: true }); return; }
+    }
+    return renderDead();
+  }
   if (st === 'revoked') return renderBad('这条链接已被停用。');
   if (st === 'locked') return renderBusy();
   // pending → 进入邀请页（带上 serverId）
