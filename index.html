@@ -2092,11 +2092,13 @@ async function finishServer() {
   }
 
   const bCode = encodeAns(state.ans);
+  const resultCode = encodeResult(local);
+  try { localStorage.setItem('crash_bres_' + state.serverId, resultCode); } catch (e) { }
   const r = await Backend.submit(state.serverId, {
     bCode,
     resultType: local.primary.type.id,
     resultIdx: local.index,
-    resultCode: encodeResult(local)
+    resultCode
   });
 
   if (!r.ok) {
@@ -2798,6 +2800,13 @@ async function bootServerLink(id) {
     if (rr.ok && rr.data.resultCode) {
       const data = decodeResult(rr.data.resultCode);
       if (data) { renderResult(data, 'B', { shared: true }); return; }
+    }
+    // 不是主人：若本机是答题者 B，缓存里还留着结论，直接重放，但不允许重答
+    let cached = null;
+    try { cached = localStorage.getItem('crash_bres_' + id); } catch (e) { }
+    if (cached) {
+      const data = decodeResult(cached);
+      if (data) { renderResult(data, 'B', { shared: false }); return; }
     }
     return renderDead();
   }
