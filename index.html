@@ -497,6 +497,30 @@ body::before {
 
 .card.ghost { opacity: .82; }
 
+/* 理论注脚 */
+.theory-intro {
+  font-size: 14px; line-height: 1.85; color: var(--ink-dim); margin: 0 0 20px;
+}
+.theory-list { display: flex; flex-direction: column; }
+.theory-item {
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 14px 0; border-bottom: 1px solid rgba(242,231,213,.07);
+}
+.theory-item:last-child { border-bottom: none; padding-bottom: 0; }
+.theory-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.theory-dim { font-size: 14.5px; font-weight: 700; color: var(--ink); letter-spacing: .02em; }
+.theory-ref {
+  font-size: 11px; color: var(--hot2); letter-spacing: .06em;
+  padding: 2px 9px; border: 1px solid rgba(230,86,58,.32); border-radius: 999px;
+  white-space: nowrap;
+}
+.theory-line { font-size: 13.5px; line-height: 1.85; color: var(--ink-dim); }
+.theory-method {
+  margin: 20px 0 0; padding: 14px 16px;
+  font-size: 13px; line-height: 1.85; color: var(--ink-dim);
+  background: rgba(0,0,0,.3); border: 1px solid var(--line);
+}
+
 .final-note {
   font-size: 12.5px; line-height: 1.95;
   color: var(--ink-faint);
@@ -1306,6 +1330,22 @@ const STRENGTHS = [
   { key: 'V', name: '讲原则', praise: '你重情也重原则，答应的事靠得住。', tip: '立场不合时，先听完对方的理由再下判断。' },
   { key: 'X', name: '不较真', praise: '你对关系不苛刻，给朋友的空间够。', tip: '需要时也主动表达一次自己的感受，别总憋着。' }
 ];
+
+/* ============================================================
+   理论注脚：把五个维度对应到真实存在的研究线索
+   原则：只做诚实参照，不伪装成临床量表、不虚构数据
+   ============================================================ */
+const THEORY = {
+  intro: '十四道题背后，是五条在人际与亲密关系研究里反复出现的线索。把它们翻译成日常场景，就是这份结论的由来。',
+  dims: [
+    { k: 'T', name: '时间温差', ref: '自我表露', refLine: '关系靠持续的表露维持；停止交流的那段空白，就是亲密感开始蒸发的地方。' },
+    { k: 'M', name: '边界态度', ref: '边界理论', refLine: '健康的亲密不是不设防，而是边界清楚、又能随时打开一扇门。' },
+    { k: 'C', name: '冲突姿态', ref: '冲突处理模型', refLine: '回避、迁就、竞争、妥协、合作——不同的组合，决定争吵是把话说开，还是把话说死。' },
+    { k: 'R', name: '回应力', ref: '情感联结尝试', refLine: '关系牢不牢，很大程度看对方抛来的情绪信号，你接不接得住。' },
+    { k: 'V', name: '价值尺度', ref: '社会交换理论', refLine: '每段关系都有一本无形的账；公平感失衡时，账本会变成火药。' }
+  ],
+  method: '「翻车指数」测的不是你们关系多差，而是分歧有多集中。分歧集中在一个维度，就像反复踩同一个坑；散在五个维度，说明你们的摩擦没有固定形状，反而更难成致命伤。'
+};
 </script>
 <script>/* ============================================================
    配对算法 v4
@@ -2363,6 +2403,22 @@ function renderResult(R, who, opts) {
       <section class="card">
         <div class="card-h"><span class="cn">06</span>如何维护这段关系</div>
         <p class="lead">${t.rescue}</p>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><span class="cn">07</span>理论注脚</div>
+        <p class="theory-intro">${THEORY.intro}</p>
+        <div class="theory-list">
+          ${THEORY.dims.map(d => `
+            <div class="theory-item">
+              <div class="theory-head">
+                <span class="theory-dim">${d.name}</span>
+                <span class="theory-ref">${d.ref}</span>
+              </div>
+              <div class="theory-line">${d.refLine}</div>
+            </div>`).join('')}
+        </div>
+        <p class="theory-method">${THEORY.method}</p>
       </section>
 
       <div class="final-note">结论仅供参考</div>
